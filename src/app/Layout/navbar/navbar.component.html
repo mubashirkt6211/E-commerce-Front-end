@@ -1,0 +1,86 @@
+<div class="navbar bg-base-100 font-outfit">
+  <!-- Navbar Start -->
+  <div class="navbar-start">
+    <!-- Mobile Menu -->
+    <div class="dropdown">
+      <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+        <i class="fa-solid fa-bars text-xl"></i>
+      </div>
+      <ul
+        tabindex="0"
+        class="menu menu-sm dropdown-content mt-3 z-[50] p-2 shadow bg-base-100 rounded-box w-52"
+      >
+        <li><a routerLink="/" class="no-underline hover:no-underline">Home</a></li>
+        <li>
+          <details>
+            <summary>Products</summary>
+            <ul class="p-2">
+              <li><a routerLink="/" class="no-underline hover:no-underline">All</a></li>
+              <li><a routerLink="/" class="no-underline hover:no-underline">Category</a></li>
+            </ul>
+          </details>
+        </li>
+        <li>
+          <details>
+            <summary>Admin</summary>
+            <ul class="p-2">
+              <li><a routerLink="/" class="no-underline hover:no-underline">Dashboard</a></li>
+              <li><a routerLink="/" class="no-underline hover:no-underline">Settings</a></li>
+            </ul>
+          </details>
+        </li>
+      </ul>
+    </div>
+
+    <a routerLink="/" class="flex items-center gap-2">
+      <img
+        src="assets/image/logo.png"
+        alt="Ecopeedika Logo"
+        class="h-20 w-auto"
+      />
+    </a>
+  </div>
+
+  <!-- Navbar Center (Desktop Menu) -->
+  <div class="navbar-center hidden lg:flex">
+    <ul class="menu menu-horizontal px-6">
+      <li><a routerLink="/" class="no-underline hover:no-underline">Home</a></li>
+      <li>
+        <details>
+          <summary class="cursor-pointer">Products</summary>
+          <ul class="p-2 z-30 bg-base-100 rounded-box shadow">
+            <li><a routerLink="/" class="no-underline hover:no-underline">All</a></li>
+            <li><a routerLink="/" class="no-underline hover:no-underline">Category </a></li>
+          </ul>
+        </details>
+      </li>
+      <li>
+        <details>
+          <summary class="cursor-pointer">Admin</summary>
+          <ul class="p-2 z-30 bg-base-100 rounded-box shadow">
+            <li><a routerLink="/" class="no-underline hover:no-underline">Dashboard</a></li>
+            <li><a routerLink="/" class="no-underline hover:no-underline">Settings</a></li>
+          </ul>
+        </details>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Navbar End (Icons) -->
+  <div class="navbar-end pe-4 flex items-center space-x-4">
+    <!-- User Menu -->
+    <div class="dropdown dropdown-end">
+      <div tabindex="0" role="button" class="cursor-pointer">
+        <i class="fa-solid fa-user text-2xl"></i>
+      </div>
+      <ul class="dropdown-content menu bg-base-100 rounded-box z-10 w-40 p-2 shadow">
+        <li><button class="link no-underline hover:no-underline">Login</button></li>
+      </ul>
+    </div>
+
+    <!-- Truck Icon -->
+    <div class="cursor-pointer">
+      <i class="fa-solid fa-truck text-2xl"></i>
+    </div>
+  </div>
+</div>
