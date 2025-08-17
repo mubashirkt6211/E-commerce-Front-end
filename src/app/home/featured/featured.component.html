@@ -1,0 +1,38 @@
+<div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 font-outfit">
+  <div *ngFor="let product of products"
+       class="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 p-4 flex flex-col">
+
+    <!-- Product Image -->
+    <div class="flex justify-center items-center h-44 mb-2">
+      <img [src]="product.imageUrl"
+           [alt]="product.name"
+           class="max-h-full object-contain transition-transform duration-300 hover:scale-105" />
+    </div>
+
+    <!-- Product Info -->
+    <div class="flex-1">
+      <!-- Brand -->
+      <p class="text-sm text-gray-500">{{ product.brand }}</p>
+
+      <!-- Name -->
+      <h3 class="font-semibold text-lg mt-1 truncate">{{ product.name }}</h3>
+
+      <!-- Badge -->
+      <div *ngIf="product.isNew"
+           class="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-md w-fit mt-2 font-medium">
+        NEW
+      </div>
+
+      <!-- Pricing -->
+      <div class="mt-4 flex items-center gap-2">
+        <span *ngIf="product.discountPrice"
+              class="line-through text-gray-400 text-sm">
+          ${{ product.price }}
+        </span>
+        <span class="text-xl font-bold text-gray-800">
+          ${{ product.discountPrice || product.price }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
