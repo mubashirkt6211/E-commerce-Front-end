@@ -1,4 +1,4 @@
-<div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 font-outfit">
+<div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 font-raleway">
   <div *ngFor="let product of products"
        class="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 p-4 flex flex-col">
 
@@ -19,7 +19,7 @@
 
       <!-- Badge -->
       <div *ngIf="product.isNew"
-           class="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-md w-fit mt-2 font-medium">
+           class="text-xs bg-white-100 text-black-600 px-2 py-0.5 rounded-md w-fit mt-2 font-medium">
         NEW
       </div>
 

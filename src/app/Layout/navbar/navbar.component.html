@@ -67,16 +67,19 @@
   </div>
 
   <!-- Navbar End (Icons) -->
-  <div class="navbar-end pe-4 flex items-center space-x-4">
-    <!-- User Menu -->
-    <div class="dropdown dropdown-end">
-      <div tabindex="0" role="button" class="cursor-pointer">
-        <i class="fa-solid fa-user text-2xl"></i>
-      </div>
-      <ul class="dropdown-content menu bg-base-100 rounded-box z-10 w-40 p-2 shadow">
-        <li><button class="link no-underline hover:no-underline">Login</button></li>
-      </ul>
+<div class="navbar-end pe-4 flex items-center space-x-4">
+  <!-- User Menu -->
+  <div class="dropdown dropdown-end">
+    <div tabindex="0" role="button" class="cursor-pointer">
+      <i class="fa-solid fa-user text-2xl"></i>
     </div>
+    <ul class="dropdown-content menu bg-base-100 rounded-box z-10 w-40 p-2 shadow">
+      <li>
+        <a routerLink="/login" routerLinkActive="active" class="link no-underline hover:no-underline">Login</a>
+      </li>
+    </ul>
+  </div>
+
 
     <!-- Truck Icon -->
     <div class="cursor-pointer">

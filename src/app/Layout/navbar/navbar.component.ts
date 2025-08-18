@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
+import { RouterLink, RouterLinkActive } from "@angular/router";
+import { CommonModule } from '@angular/common';
+import { LoginComponent } from "../../auth/login/login.component";
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, RouterLink, RouterLinkActive, LoginComponent],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css'
+  styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent {
-closeMenu: any;
-
+  
 }

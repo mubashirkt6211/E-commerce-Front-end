@@ -1,0 +1,89 @@
+<div class="min-h-screen flex items-center justify-center px-4 font-raleway">
+  <div class="card w-full max-w-md shadow-lg rounded-lg bg-white p-8">
+    <h2 class="text-3xl font-bold text-center mb-2">Welcome back</h2>
+    <p class="text-center text-gray-500 mb-6">
+      Enter your credentials to access your account
+    </p>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
+      <div class="form-control w-full max-w-lg">
+        <label class="label">
+          <span class="label-text font-medium">Email</span>
+        </label>
+        <div class="input input-bordered flex items-center gap-2 w-full">
+          <i class="fa-solid fa-envelope text-gray-800"></i>
+          <input
+            type="email"
+            placeholder="Enter your email"
+            class="grow w-full"
+            formControlName="email"
+          />
+        </div>
+        <p
+          class="text-sm text-red-500 mt-1"
+          *ngIf="f['email'].touched && f['email'].invalid"
+        >
+          Enter a valid email
+        </p>
+      </div>
+      <div class="form-control relative w-full max-w-lg">
+        <label class="label">
+          <span class="label-text font-medium">Password</span>
+        </label>
+        <div class="input input-bordered flex items-center gap-2 w-full">
+          <i class="fa-solid fa-lock text-gray-800"></i>
+          <input
+            [type]="f['showPassword'].value ? 'text' : 'password'"
+            placeholder="Enter your password"
+            class="grow w-full"
+            formControlName="password"
+          />
+          <button
+            type="button"
+            class="btn btn-ghost btn-sm"
+            (click)="togglePassword()"
+          >
+            <i
+              class="fa-solid"
+              [ngClass]="f['showPassword'].value ? 'fa-eye-slash' : 'fa-eye'"
+            ></i>
+          </button>
+        </div>
+        <p
+          class="text-sm text-red-500 mt-1"
+          *ngIf="f['password'].touched && f['password'].invalid"
+        >
+          Password is required
+        </p>
+      </div>
+      <div class="flex justify-between items-center text-sm">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            formControlName="rememberMe"
+            class="checkbox checkbox-sm"
+          />
+          Remember me
+        </label>
+        <a href="#" class="text-black">Forgot password?</a>
+      </div>
+      <button class="btn btn-neutral w-full mt-2">Sign in</button>
+      <div class="flex items-center my-4">
+        <hr class="flex-grow border-gray-300" />
+        <span class="px-2 text-gray-400 text-sm">OR CONTINUE WITH</span>
+        <hr class="flex-grow border-gray-300" />
+      </div>
+      <div class="flex gap-2">
+        <button class="btn btn-outline w-full flex-1 gap-2 justify-center">
+          <i class="fa-brands fa-github"></i> GitHub
+        </button>
+        <button class="btn btn-outline w-full flex-1 gap-2 justify-center">
+          <i class="fa-solid fa-envelope"></i> Google
+        </button>
+      </div>
+      <p class="text-center text-gray-500 text-sm mt-4">
+        Don’t have an account?
+        <a routerLink="/register" class="text-black font-medium hover:underline">Sign up</a>
+      </p>
+    </form>
+  </div>
+</div>
