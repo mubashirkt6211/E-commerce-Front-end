@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 export interface Product {
   id: string;
@@ -17,7 +18,7 @@ export interface Product {
 @Component({
   selector: 'app-featured',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,RouterLink],
   templateUrl: './featured.component.html',
   styleUrls: ['./featured.component.css']
 })
@@ -40,6 +41,28 @@ export class FeaturedComponent {
       isNew: true,
     },
     {
+      id: 'p2',
+      brand: 'Adidas',
+      name: 'Ultraboost Light',
+      category: 'Shoes',
+      descrption: 'High energy return running shoes.',
+      imageUrl: 'https://i.pinimg.com/736x/30/87/f2/3087f22cf2fe64fde08a0447efe20559.jpg',
+      price: 180,
+      discountPrice: 150,
+      isNew: false,
+    },
+      {
+      id: 'p2',
+      brand: 'Adidas',
+      name: 'Ultraboost Light',
+      category: 'Shoes',
+      descrption: 'High energy return running shoes.',
+      imageUrl: 'https://i.pinimg.com/736x/30/87/f2/3087f22cf2fe64fde08a0447efe20559.jpg',
+      price: 180,
+      discountPrice: 150,
+      isNew: false,
+    },
+      {
       id: 'p2',
       brand: 'Adidas',
       name: 'Ultraboost Light',

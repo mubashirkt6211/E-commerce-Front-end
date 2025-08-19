@@ -1,0 +1,201 @@
+<!-- Product Details -->
+<div
+  *ngIf="product; else loading"
+  class="min-h-screen flex justify-center items-start p-6 font-raleway"
+>
+  <div class="max-w-6xl w-full flex flex-col md:flex-row gap-10 p-6">
+    <!-- Product Image(s) -->
+    <div class="md:w-1/2 flex flex-col items-center gap-4">
+      <!-- Main image -->
+      <img
+        [src]="selectedImage || product.imageUrls[0]"
+        [alt]="product.name"
+        class="object-contain w-full max-h-[500px] rounded-xl transition-transform duration-300 hover:scale-105"
+      />
+
+      <!-- Thumbnails -->
+      <div
+        *ngIf="product.imageUrls.length > 1"
+        class="flex gap-3 overflow-x-auto py-2"
+      >
+        <img
+          *ngFor="let img of product.imageUrls"
+          [src]="img"
+          [alt]="product.name"
+          (click)="selectedImage = img"
+          class="w-20 h-20 object-cover rounded-md cursor-pointer border hover:ring-2 hover:ring-blue-500 transition"
+          [class.ring-2]="selectedImage === img"
+          [class.ring-blue-500]="selectedImage === img"
+        />
+      </div>
+    </div>
+
+    <!-- Product Info -->
+    <div class="md:w-1/2 flex flex-col gap-6">
+      <!-- Brand + Name -->
+      <div>
+        <p class="text-m text-gray-500 flex items-center gap-2">
+          <i class="fa-solid fa-tag"></i> {{ product.brand }}
+        </p>
+        <h1 class="text-3xl font-bold mt-2 leading-snug">
+          {{ product.name }}
+        </h1>
+
+        <!-- Badges -->
+        <div class="flex flex-wrap gap-2 mt-3">
+          <span
+            *ngIf="product.isNew"
+            class="px-3 py-1 text-xs font-medium text-white bg-green-500 rounded-full flex items-center gap-1"
+          >
+            <i class="fa-solid fa-sparkles"></i> NEW
+          </span>
+
+          <span
+            *ngIf="product.onSale"
+            class="px-3 py-1 text-xs font-medium text-white bg-red-500 rounded-full flex items-center gap-1"
+          >
+            <i class="fa-solid fa-bolt"></i> ON SALE
+          </span>
+
+          <span
+            *ngIf="!product.inStock"
+            class="px-3 py-1 text-xs font-medium text-white bg-gray-500 rounded-full flex items-center gap-1"
+          >
+            <i class="fa-solid fa-box-archive"></i> OUT OF STOCK
+          </span>
+        </div>
+      </div>
+
+      <!-- Rating -->
+      <div class="flex items-center gap-1">
+        <ng-container *ngFor="let star of getStars(product.rating || 0)">
+          <ng-container [ngSwitch]="star">
+            <i
+              *ngSwitchCase="'full'"
+              class="fa-solid fa-star text-yellow-500"
+            ></i>
+            <i
+              *ngSwitchCase="'half'"
+              class="fa-solid fa-star-half-stroke text-yellow-500"
+            ></i>
+            <i
+              *ngSwitchCase="'empty'"
+              class="fa-regular fa-star text-gray-300"
+            ></i>
+          </ng-container>
+        </ng-container>
+        <span class="ml-2 text-gray-600 text-sm">
+          ({{ product.rating }}/5 • {{ product.reviewCount }} reviews)
+        </span>
+      </div>
+
+      <!-- Description -->
+      <p class="text-gray-700 text-base leading-relaxed">
+        {{ product.description }}
+      </p>
+
+      <!-- Product Specs -->
+      <div class="space-y-2 text-sm text-gray-600">
+        <p *ngIf="product.weight" class="flex items-center gap-2">
+          <i class="fa-solid fa-weight-hanging text-gray-500"></i>
+          <span class="font-semibold">Weight:</span> {{ product.weight }} kg
+        </p>
+
+        <p *ngIf="product.shippingClass" class="flex items-center gap-2">
+          <i class="fa-solid fa-truck-fast text-gray-500"></i>
+          <span class="font-semibold">Shipping:</span> {{ product.shippingClass }}
+        </p>
+
+        <!-- <p class="flex items-center gap-2">
+          <i class="fa-solid fa-box text-gray-500"></i>
+          <span class="font-semibold">Available Quantity:</span>
+          {{ product.quantity }}
+        </p> -->
+      </div>
+
+      <!-- Colors -->
+      <div *ngIf="product.color?.length">
+        <h3 class="text-lg font-semibold mb-2">Available Colors</h3>
+        <div class="flex items-center gap-4 flex-wrap">
+          <label
+            *ngFor="let color of product.color"
+            class="flex items-center gap-2 cursor-pointer"
+          >
+            <input
+              type="radio"
+              name="color"
+              class="hidden peer"
+              [value]="color"
+              [checked]="selectedColor === color"
+              (change)="onColorSelect(color)"
+            />
+            <span
+              class="w-8 h-8 rounded-full border shadow-md peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-blue-500 transition"
+              [ngStyle]="{ 'background-color': color }"
+            ></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Sizes -->
+      <div *ngIf="product.sizes?.length">
+        <h3 class="text-lg font-semibold mb-2">Available Sizes</h3>
+        <div class="flex gap-3 flex-wrap">
+          <button
+            *ngFor="let size of product.sizes"
+            class="px-4 py-2 border rounded-lg hover:bg-gray-100 transition"
+            [class.bg-blue-600]="selectedSize === size"
+            [class.text-white]="selectedSize === size"
+            (click)="onSizeSelect(size)"
+          >
+            {{ size }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Price -->
+      <div class="flex items-center gap-4 text-2xl font-semibold">
+        <span
+          *ngIf="product.discountPrice"
+          class="text-gray-400 line-through text-lg flex items-center gap-1"
+        >
+          <i class="fa-solid fa-indian-rupee-sign"></i>{{ product.price }}
+        </span>
+        <span class="text-gray-900 flex items-center gap-1">
+          <i class="fa-solid fa-indian-rupee-sign"></i
+          >{{ product.discountPrice || product.price }}
+        </span>
+      </div>
+
+      <!-- Stock -->
+      <p
+        class="text-sm flex items-center gap-2"
+        [ngClass]="{
+          'text-green-600': product.inStock,
+          'text-red-500': !product.inStock
+        }"
+      >
+        <i class="fa-solid" [ngClass]="product.inStock ? 'fa-circle-check' : 'fa-circle-xmark'"></i>
+        {{ product.inStock ? "In Stock" : "Currently Unavailable" }}
+      </p>
+
+      <!-- Actions -->
+      <div class="flex flex-col sm:flex-row gap-4 mt-4">
+        <button
+          class="btn btn-primary btn-lg w-full sm:w-auto gap-2"
+          [disabled]="!product.inStock"
+        >
+          <i class="fa-solid fa-cart-shopping"></i> Add to Cart
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Spinner -->
+<ng-template #loading>
+  <div class="flex w-full justify-center mt-10">
+    <span class="loading loading-spinner loading-lg"></span>
+  </div>
+</ng-template>
+
