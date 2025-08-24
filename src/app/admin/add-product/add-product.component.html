@@ -1,189 +1,118 @@
-<div class="max-w-3xl mx-auto mt-10 font-outfit">
-  <div class="card bg-base-100 shadow-xl">
-    <div class="card-body">
-      <!-- Title -->
-      <h2 class="card-title text-2xl mb-4">
-        <i class="fa-solid fa-box-open text-black"></i>
-        Add Product
-      </h2>
+<div class="max-w-4xl mx-auto mt-12 font-outfit">
 
-      <!-- Form -->
-      <form (ngSubmit)="onSubmit()" #productForm="ngForm" class="space-y-4">
+  <h1 class="text-3xl font-bold mb-6 flex items-center gap-3">
+    <i class="fa-solid fa-box-open text-black"></i> Add New Product
+  </h1>
 
-        <!-- Product Name -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">Product Name</span>
+  <!-- STEP INDICATOR -->
+  <div class="flex justify-between mb-6">
+    <div class="flex-1 text-center py-2 border-b-2" [class.border-black]="step === 1">1. Product Details</div>
+    <div class="flex-1 text-center py-2 border-b-2" [class.border-black]="step === 2">2. Shipping & Category</div>
+    <div class="flex-1 text-center py-2 border-b-2" [class.border-black]="step === 3">3. Colors & Sizes</div>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" #productForm="ngForm" class="space-y-6">
+
+    <!-- STEP 1: PRODUCT DETAILS -->
+    <div *ngIf="step === 1" class="card bg-base-100 shadow-lg rounded-xl p-6 hover:shadow-2xl transition">
+      <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Product Details</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input type="text" name="name" [(ngModel)]="product.name" required placeholder="Product Name *" class="input input-bordered w-full" />
+        <input type="text" name="brand" [(ngModel)]="product.brand" required placeholder="Brand *" class="input input-bordered w-full" />
+        <textarea name="description" [(ngModel)]="product.description" rows="4" required placeholder="Description *" class="textarea textarea-bordered w-full md:col-span-2"></textarea>
+        <input type="number" name="weight" [(ngModel)]="product.weight" required placeholder="Weight (kg) *" class="input input-bordered w-full" />
+        <input type="number" name="quantity" [(ngModel)]="product.quantity" required placeholder="Quantity *" class="input input-bordered w-full" />
+        <input type="number" name="price" [(ngModel)]="product.price" required placeholder="Price *" class="input input-bordered w-full" />
+        <input type="number" name="discountPrice" [(ngModel)]="product.discountPrice" placeholder="Discount Price" class="input input-bordered w-full" />
+      </div>
+
+      <div class="flex gap-6 mt-4">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" [(ngModel)]="product.inStock" name="inStock" class="checkbox checkbox-neutral"/>
+          In Stock
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" [(ngModel)]="product.onSale" name="onSale" class="checkbox checkbox-neutral"/>
+          On Sale
+        </label>
+      </div>
+
+      <div class="flex justify-end mt-6">
+        <button type="button" class="btn btn-neutral" (click)="step=2">Next →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: SHIPPING & CATEGORY -->
+    <div *ngIf="step === 2" class="card bg-base-100 shadow-lg rounded-xl p-6 hover:shadow-2xl transition">
+      <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Shipping & Category</h2>
+
+      <!-- Shipping Types -->
+      <div class="mb-4">
+        <label class="label"><span class="label-text font-medium">Shipping Options</span></label>
+        <div class="flex flex-wrap gap-3">
+          <label *ngFor="let type of availableShippingTypes" class="cursor-pointer">
+            <input type="checkbox" [value]="type" (change)="toggleShippingTypeButton(type)" [checked]="product.shippingTypes.includes(type)" class="checkbox checkbox-neutral mr-2"/>
+            {{ type | titlecase }}
           </label>
-          <input
-            type="text"
-            name="name"
-            [(ngModel)]="product.name"
-            required
-            placeholder="Enter product name"
-            class="input input-bordered w-full"
-          />
         </div>
+        <p class="text-sm text-gray-500 mt-1">{{ product.shippingTypes.length }} selected</p>
+      </div>
 
-        <!-- Brand -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">Brand</span>
-          </label>
-          <input
-            type="text"
-            name="brand"
-            [(ngModel)]="product.brand"
-            required
-            placeholder="Enter brand"
-            class="input input-bordered w-full"
-          />
-        </div>
+      <!-- Category & Images -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <select name="category" [(ngModel)]="product.category" required class="select select-bordered w-full">
+          <option value="" disabled selected>Select Category *</option>
+          <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+        </select>
+        <input type="file" (change)="onFilesSelected($event)" accept="image/*" multiple class="file-input file-input-bordered w-full" />
+      </div>
 
-        <!-- Description -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">Description</span>
-          </label>
-          <textarea
-            name="description"
-            [(ngModel)]="product.description"
-            rows="4"
-            required
-            placeholder="Enter product description"
-            class="textarea textarea-bordered w-full"
-          ></textarea>
-        </div>
+      <div *ngIf="previewUrls.length" class="flex flex-wrap gap-4 mt-4">
+        <img *ngFor="let url of previewUrls" [src]="url" class="h-28 w-28 object-cover rounded-lg border shadow-md"/>
+      </div>
 
-        <!-- Price & Discount -->
-        <div class="grid grid-cols-2 gap-4">
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">Price</span>
-            </label>
-            <input
-              type="number"
-              name="price"
-              [(ngModel)]="product.price"
-              required
-              placeholder="Enter price"
-              class="input input-bordered w-full"
-            />
-          </div>
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">Discount Price</span>
-            </label>
-            <input
-              type="number"
-              name="discountPrice"
-              [(ngModel)]="product.discountPrice"
-              placeholder="Optional"
-              class="input input-bordered w-full"
-            />
-          </div>
-        </div>
+      <div class="flex justify-between mt-6">
+        <button type="button" class="btn btn-outline" (click)="step=1">← Back</button>
+        <button type="button" class="btn btn-neutral" (click)="step=3">Next →</button>
+      </div>
+    </div>
 
-        <!-- Quantity -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">Quantity</span>
-          </label>
-          <input
-            type="number"
-            name="quantity"
-            [(ngModel)]="product.quantity"
-            required
-            placeholder="Enter quantity"
-            class="input input-bordered w-full"
-          />
-        </div>
+    <!-- STEP 3: COLORS & SIZES + SUBMIT -->
+    <div *ngIf="step === 3" class="card bg-base-100 shadow-lg rounded-xl p-6 hover:shadow-2xl transition">
+      <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Colors & Sizes</h2>
 
-        <!-- Category -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">Category</span>
-          </label>
-          <select
-            name="category"
-            [(ngModel)]="product.category"
-            required
-            class="select select-bordered w-full"
-          >
-            <option value="" disabled selected>Select category</option>
-            <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
-          </select>
-        </div>
-
-        <!-- Images -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">Product Images</span>
-          </label>
-          <input
-            type="file"
-            (change)="onFilesSelected($event)"
-            accept="image/*"
-            multiple
-            class="file-input file-input-bordered w-full"
-          />
-        </div>
-
-        <!-- Image Previews -->
-        <div *ngIf="previewUrls.length" class="flex flex-wrap gap-4 mt-2">
-          <img *ngFor="let url of previewUrls" [src]="url" class="h-28 w-28 object-cover rounded-lg border shadow-md"/>
-        </div>
-
-        <!-- Colors -->
-        <div *ngIf="colors.length" class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">Available Colors</span>
-          </label>
-          <div class="flex flex-wrap gap-3">
-            <div *ngFor="let color of colors" (click)="toggleColor(color)" 
-                 class="w-8 h-8 rounded-full border shadow-md cursor-pointer"
-                 [ngStyle]="{'background-color': color}"
-                 [class.ring-2]="product.colorSelection[color]"
-                 [class.ring-blue-500]="product.colorSelection[color]">
-            </div>
+      <!-- Colors -->
+      <div class="mb-4">
+        <label class="label"><span class="label-text font-medium">Available Colors</span></label>
+        <div class="flex flex-wrap gap-3">
+          <div *ngFor="let color of colors" (click)="toggleColor(color)" 
+               class="w-10 h-10 rounded-full border shadow-md cursor-pointer transition-transform hover:scale-110"
+               [ngStyle]="{'background-color': color}"
+               [class.ring-2]="product.colorSelection[color]"
+               [class.ring-indigo-500]="product.colorSelection[color]">
           </div>
         </div>
+      </div>
 
-        <!-- Sizes -->
-        <div *ngIf="sizes.length" class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">Available Sizes</span>
-          </label>
-          <div class="flex flex-wrap gap-3">
-            <button type="button" *ngFor="let size of sizes"
-                    (click)="toggleSize(size)"
-                    class="px-4 py-2 border rounded-lg transition"
-                    [class.bg-blue-600]="product.sizeSelection[size]"
-                    [class.text-white]="product.sizeSelection[size]">
-              {{ size }}
-            </button>
-          </div>
-        </div>
-
-        <!-- Stock & Sale -->
-        <div class="flex gap-4 mt-4">
-          <label class="cursor-pointer flex items-center gap-2">
-            <input type="checkbox" [(ngModel)]="product.inStock" name="inStock" class="checkbox checkbox-primary"/>
-            In Stock
-          </label>
-          <label class="cursor-pointer flex items-center gap-2">
-            <input type="checkbox" [(ngModel)]="product.onSale" name="onSale" class="checkbox checkbox-accent"/>
-            On Sale
-          </label>
-        </div>
-
-        <!-- Submit -->
-        <div class="form-control mt-6">
-          <button type="submit" [disabled]="!productForm.form.valid" class="btn btn-neutral w-full">
-            <i class="fa-solid fa-plus-circle mr-2"></i> Add Product
+      <!-- Sizes -->
+      <div>
+        <label class="label"><span class="label-text font-medium">Available Sizes</span></label>
+        <div class="flex flex-wrap gap-3">
+          <button type="button" *ngFor="let size of sizes"
+                  (click)="toggleSize(size)"
+                  class="px-5 py-2 border rounded-lg transition hover:bg-black hover:text-white"
+                  [class.bg-black]="product.sizeSelection[size]"
+                  [class.text-white]="product.sizeSelection[size]">
+            {{ size }}
           </button>
         </div>
-      </form>
+      </div>
+
+      <div class="flex justify-between mt-6">
+        <button type="button" class="btn btn-outline" (click)="step=2">← Back</button>
+        <button type="submit" [disabled]="!productForm.form.valid || loading" class="btn btn-neutral">Submit</button>
+      </div>
     </div>
-  </div>
+
+  </form>
 </div>

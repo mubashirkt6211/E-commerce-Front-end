@@ -1,5 +1,4 @@
 <div class="p-6 font-outfit">
-  <!-- Header -->
   <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-bold">Categories</h2>
     <button
@@ -9,8 +8,6 @@
       {{ editingCategory ? 'Cancel Edit' : '+ Add Category' }}
     </button>
   </div>
-
-  <!-- Add/Update Category Form -->
   <div *ngIf="openForm" class="mb-6">
     <form (ngSubmit)="onSubmit()" class="flex gap-2">
       <input
@@ -26,9 +23,7 @@
       </button>
     </form>
   </div>
-
-  <!-- Categories Table -->
-  <div class="overflow-x-auto rounded-box shadow-lg">
+  <div class="overflow-x-auto rounded-xl shadow-lg">
     <table class="table w-full">
       <thead class="bg-base-100">
         <tr>
@@ -43,14 +38,14 @@
           <td class="border border-gray-300">{{ cat.name }}</td>
           <td class="border border-gray-300 text-center flex gap-2 justify-center">
             <button
-              class="btn btn-accent btn-xs"
+              class="btn btn-neutral btn-xs"
               (click)="editCategory(cat)"
             >
              <i class="fa-solid fa-pen"></i>
               Update
             </button>
             <button
-              class="btn btn-secondary btn-xs"
+              class="btn btn-primary btn-xs"
               (click)="deleteCategory(cat.id)"
             >
              <i class="fa-solid fa-trash"></i>

@@ -151,11 +151,11 @@
                 <i class="fa-solid fa-circle-plus"></i> Add Products
               </a>
             </li>
-            <li>
+            <!-- <li>
               <a routerLink="/seller/orders" class="flex items-center gap-2">
                 <i class="fa-solid fa-cart-shopping"></i> Orders
               </a>
-            </li>
+            </li> -->
             <li>
               <a routerLink="/seller/products" class="flex items-center gap-2">
                 <i class="fa-solid fa-boxes-stacked"></i> Manage Products
@@ -164,8 +164,25 @@
           </ul>
         </details>
       </li>
+
+       <li *ngIf="isSeller()">
+        <details>
+          <summary class="flex items-center gap-2">
+            <i class="fa-solid fa-cart-shopping"></i> Orders
+          </summary>
+          <ul class="p-2 z-30 bg-base-100 rounded-box shadow">
+            <li>
+              <a routerLink="/seller/orders" class="flex items-center gap-2">
+                <i class="fa-solid fa-cart-shopping"></i> Orders
+              </a>
+            </li>
+          </ul>
+        </details>
+      </li>
     </ul>
   </div>
+
+  
 
   <!-- Navbar End (User & Icons) -->
   <div class="navbar-end pe-4 flex items-center space-x-4">
