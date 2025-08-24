@@ -1,42 +1,86 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CategoryService, Category } from '../../shared/category.service';
 
 @Component({
   selector: 'app-category',
   standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './category.component.html',
-  styleUrl: './category.component.css'
+  styleUrls: ['./category.component.css']
 })
-export class CategoryComponent {
-category = {
-    name: '',
-    image: null as File | null
-  };
+export class CategoryComponent implements OnInit {
+  category: Category = { id: 0, name: '' }; // include id for update
+  categories: Category[] = [];
+  openForm = false;
+  editingCategory: Category | null = null;
 
-  previewUrl: string | ArrayBuffer | null = null;
+  constructor(private categoryService: CategoryService) {}
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      this.category.image = input.files[0];
+  ngOnInit(): void {
+    this.loadCategories();
+  }
 
-      // Preview
-      const reader = new FileReader();
-      reader.onload = e => this.previewUrl = reader.result;
-      reader.readAsDataURL(this.category.image);
+  loadCategories(): void {
+    this.categoryService.getCategories().subscribe({
+      next: data => (this.categories = data),
+      error: err => console.error('Error loading categories', err)
+    });
+  }
+
+  toggleForm(): void {
+    if (this.editingCategory) {
+      // Cancel edit
+      this.resetForm();
+    } else {
+      this.openForm = !this.openForm;
     }
   }
 
   onSubmit(): void {
-    const formData = new FormData();
-    formData.append('name', this.category.name);
-    if (this.category.image) {
-      formData.append('image', this.category.image);
+    if (this.editingCategory) {
+      // Update category
+      this.categoryService.updateCategory(this.category.id!, this.category).subscribe({
+        next: res => {
+          console.log('Category updated:', res);
+          this.resetForm();
+          this.loadCategories();
+        },
+        error: err => console.error('Error updating category', err)
+      });
+    } else {
+      // Create category
+      this.categoryService.createCategory(this.category).subscribe({
+        next: res => {
+          console.log('Category created:', res);
+          this.resetForm();
+          this.loadCategories();
+        },
+        error: err => console.error('Error creating category', err)
+      });
     }
+  }
 
-    console.log('Form submitted:', formData);
-    // 🔹 Here you call your backend API with HttpClient
+  editCategory(cat: Category): void {
+    this.category = { ...cat }; // copy values
+    this.editingCategory = cat;
+    this.openForm = true;
+  }
+
+  deleteCategory(id: number): void {
+    this.categoryService.deleteCategory(id).subscribe({
+      next: () => {
+        console.log('Category deleted');
+        this.loadCategories();
+      },
+      error: err => console.error('Error deleting category', err)
+    });
+  }
+
+  private resetForm(): void {
+    this.category = { id: 0, name: '' };
+    this.openForm = false;
+    this.editingCategory = null;
   }
 }
