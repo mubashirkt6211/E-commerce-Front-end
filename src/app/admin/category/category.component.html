@@ -1,0 +1,60 @@
+<div class="max-w-md mx-auto mt-10 font-outfit">
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <!-- Title -->
+      <h2 class="card-title text-2xl mb-4">
+        <i class="fa-solid fa-folder-plus text-black"></i>
+        Add Category
+      </h2>
+
+      <!-- Form -->
+      <form (ngSubmit)="onSubmit()" #categoryForm="ngForm" class="space-y-4">
+        <!-- Category Name -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Category Name</span>
+          </label>
+          <input
+            type="text"
+            name="name"
+            [(ngModel)]="category.name"
+            required
+            placeholder="Enter category name"
+            class="input input-bordered w-full"
+          />
+        </div>
+
+        <!-- Category Image -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Category Image</span>
+          </label>
+          <input
+            type="file"
+            (change)="onFileSelected($event)"
+            accept="image/*"
+            class="file-input file-input-bordered w-full"
+          />
+        </div>
+
+        <!-- Preview -->
+        <div *ngIf="previewUrl" class="mt-3">
+          <p class="text-sm text-gray-500 mb-1">Preview:</p>
+          <img [src]="previewUrl" alt="Preview" class="h-28 rounded-lg border shadow-md" />
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-control mt-6">
+          <button
+            type="submit"
+            [disabled]="!categoryForm.form.valid"
+            class="btn btn-neutral w-full"
+          >
+            <i class="fa-solid fa-plus-circle mr-2"></i>
+            Add Category
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

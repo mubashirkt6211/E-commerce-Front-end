@@ -10,80 +10,243 @@
         tabindex="0"
         class="menu menu-sm dropdown-content mt-3 z-[50] p-2 shadow bg-base-100 rounded-box w-52"
       >
-        <li><a routerLink="/" class="no-underline hover:no-underline">Home</a></li>
+        <!-- Home -->
         <li>
+          <a routerLink="/" class="flex items-center gap-2">
+            <i class="fa-solid fa-house"></i> Home
+          </a>
+        </li>
+
+        <!-- Customer Menu -->
+        <li *ngIf="isCustomer()">
           <details>
-            <summary>Products</summary>
-            <ul class="p-2">
-              <li><a routerLink="/" class="no-underline hover:no-underline">All</a></li>
-              <li><a routerLink="/" class="no-underline hover:no-underline">Category</a></li>
+            <summary class="cursor-pointer flex items-center gap-2">
+              <i class="fa-solid fa-box-open"></i> Products
+            </summary>
+            <ul class="p-2 space-y-1">
+              <li>
+                <a routerLink="/products/all" class="flex items-center gap-2">
+                  <i class="fa-solid fa-shop"></i> All Products
+                </a>
+              </li>
+              <li>
+                <a routerLink="/products/categories" class="flex items-center gap-2">
+                  <i class="fa-solid fa-layer-group"></i> Shop by Category
+                </a>
+              </li>
+              <li>
+                <a routerLink="/products/new" class="flex items-center gap-2">
+                  <i class="fa-solid fa-star"></i> New Arrivals
+                </a>
+              </li>
+              <li>
+                <a routerLink="/products/best-sellers" class="flex items-center gap-2">
+                  <i class="fa-solid fa-fire"></i> Best Sellers
+                </a>
+              </li>
+              <li>
+                <a routerLink="/products/offers" class="flex items-center gap-2">
+                  <i class="fa-solid fa-tags"></i> Offers & Discounts
+                </a>
+              </li>
             </ul>
           </details>
         </li>
-        <li>
+
+        <!-- Seller Menu -->
+        <li *ngIf="isSeller()">
           <details>
-            <summary>Admin</summary>
+            <summary class="flex items-center gap-2">
+              <i class="fa-solid fa-store"></i> Seller
+            </summary>
             <ul class="p-2">
-              <li><a routerLink="/" class="no-underline hover:no-underline">Dashboard</a></li>
-              <li><a routerLink="/" class="no-underline hover:no-underline">Settings</a></li>
+              <li>
+                <a routerLink="/seller/dashboard" class="flex items-center gap-2">
+                  <i class="fa-solid fa-chart-line"></i> Dashboard
+                </a>
+              </li>
+              <li>
+                <a routerLink="/seller/orders" class="flex items-center gap-2">
+                  <i class="fa-solid fa-cart-shopping"></i> Orders
+                </a>
+              </li>
+              <li>
+                <a routerLink="/seller/products" class="flex items-center gap-2">
+                  <i class="fa-solid fa-boxes-stacked"></i> Manage Products
+                </a>
+              </li>
             </ul>
           </details>
         </li>
       </ul>
     </div>
 
+    <!-- Logo -->
     <a routerLink="/" class="flex items-center gap-2">
-      <img
-        src="assets/image/logo.png"
-        alt="Ecopeedika Logo"
-        class="h-20 w-auto"
-      />
+      <img src="assets/image/logo.png" alt="Ecopeedika Logo" class="h-20 w-auto" />
     </a>
   </div>
 
   <!-- Navbar Center (Desktop Menu) -->
   <div class="navbar-center hidden lg:flex">
     <ul class="menu menu-horizontal px-6">
-      <li><a routerLink="/" class="no-underline hover:no-underline">Home</a></li>
       <li>
+        <a routerLink="/" class="flex items-center gap-2">
+          <i class="fa-solid fa-house"></i> Home
+        </a>
+      </li>
+
+      <!-- Customer Menu -->
+      <li *ngIf="isCustomer()">
         <details>
-          <summary class="cursor-pointer">Products</summary>
-          <ul class="p-2 z-30 bg-base-100 rounded-box shadow">
-            <li><a routerLink="/" class="no-underline hover:no-underline">All</a></li>
-            <li><a routerLink="/" class="no-underline hover:no-underline">Category </a></li>
+          <summary class="flex items-center gap-2">
+            <i class="fa-solid fa-box-open"></i> Products
+          </summary>
+          <ul class="p-2 space-y-1">
+            <li>
+              <a routerLink="/products/all" class="flex items-center gap-2">
+                <i class="fa-solid fa-shop"></i> All Products
+              </a>
+            </li>
+            <li>
+              <a routerLink="/products/new" class="flex items-center gap-2">
+                <i class="fa-solid fa-star"></i> New Arrivals
+              </a>
+            </li>
+            <li>
+              <a routerLink="/products/best-sellers" class="flex items-center gap-2">
+                <i class="fa-solid fa-fire"></i> Best Sellers
+              </a>
+            </li>
           </ul>
         </details>
       </li>
-      <li>
+
+    
+
+      <li *ngIf="isSeller()">
         <details>
-          <summary class="cursor-pointer">Admin</summary>
+          <summary class="flex items-center gap-2">
+            <i class="fa-solid fa-tags"></i> Category
+          </summary>
           <ul class="p-2 z-30 bg-base-100 rounded-box shadow">
-            <li><a routerLink="/" class="no-underline hover:no-underline">Dashboard</a></li>
-            <li><a routerLink="/" class="no-underline hover:no-underline">Settings</a></li>
+            <li>
+              <a routerLink="/category" class="flex items-center gap-2">
+                <i class="fa-solid fa-sitemap"></i> Manage Category
+              </a>
+            </li>
+          </ul>
+        </details>
+      </li>
+
+        <!-- Seller Menu -->
+      <li *ngIf="isSeller()">
+        <details>
+          <summary class="flex items-center gap-2">
+            <i class="fa-solid fa-store"></i> Products
+          </summary>
+          <ul class="p-2 z-30 bg-base-100 rounded-box shadow">
+            <li>
+              <a routerLink="/add-product" class="flex items-center gap-2">
+                <i class="fa-solid fa-circle-plus"></i> Add Products
+              </a>
+            </li>
+            <li>
+              <a routerLink="/seller/orders" class="flex items-center gap-2">
+                <i class="fa-solid fa-cart-shopping"></i> Orders
+              </a>
+            </li>
+            <li>
+              <a routerLink="/seller/products" class="flex items-center gap-2">
+                <i class="fa-solid fa-boxes-stacked"></i> Manage Products
+              </a>
+            </li>
           </ul>
         </details>
       </li>
     </ul>
   </div>
 
-  <!-- Navbar End (Icons) -->
-<div class="navbar-end pe-4 flex items-center space-x-4">
-  <!-- User Menu -->
-  <div class="dropdown dropdown-end">
-    <div tabindex="0" role="button" class="cursor-pointer">
-      <i class="fa-solid fa-user text-2xl"></i>
+  <!-- Navbar End (User & Icons) -->
+  <div class="navbar-end pe-4 flex items-center space-x-4">
+    <!-- Not logged in -->
+    <div class="dropdown dropdown-end" *ngIf="!isLoggedIn; else loggedInDropdown">
+      <div
+        tabindex="0"
+        role="button"
+        class="cursor-pointer flex items-center gap-2 p-2 hover:bg-gray-100 rounded transition"
+      >
+        <i class="fa-solid fa-user text-2xl text-gray-600"></i>
+        <span class="text-gray-800 font-medium">Login</span>
+      </div>
+      <ul class="dropdown-content menu bg-white rounded-lg shadow-lg w-48 mt-2 p-2 border border-gray-200">
+        <li>
+          <a routerLink="/login" class="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100 transition">
+            <i class="fa-solid fa-right-to-bracket"></i> Login
+          </a>
+        </li>
+      </ul>
     </div>
-    <ul class="dropdown-content menu bg-base-100 rounded-box z-10 w-40 p-2 shadow">
-      <li>
-        <a routerLink="/login" routerLinkActive="active" class="link no-underline hover:no-underline">Login</a>
-      </li>
-    </ul>
-  </div>
 
+    <!-- Logged in -->
+    <ng-template #loggedInDropdown>
+      <div class="dropdown dropdown-end">
+        <div
+          tabindex="0"
+          role="button"
+          class="cursor-pointer flex items-center gap-2 p-2 rounded transition"
+        >
+          <!-- Profile picture / Initial -->
+          <div
+            class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-lg bg-gradient-to-br from-gray-500 to-indigo-600 shadow-md select-none"
+          >
+            {{ userName.charAt(0).toUpperCase() }}
+          </div>
 
-    <!-- Truck Icon -->
-    <div class="cursor-pointer">
-      <i class="fa-solid fa-truck text-2xl"></i>
+          <span class="text-gray-800 font-medium">{{ userName }}</span>
+        </div>
+        <ul class="dropdown-content menu bg-white rounded-lg shadow-lg w-48 mt-2 p-2 border border-gray-200">
+          <li>
+            <a routerLink="/profile" class="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100 transition">
+              <i class="fa-solid fa-user"></i> Profile
+            </a>
+          </li>
+
+          <!-- Customer-only link -->
+          <li *ngIf="isCustomer()">
+            <a routerLink="/orders" class="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100 transition">
+              <i class="fa-solid fa-truck"></i> Orders
+            </a>
+          </li>
+
+          <!-- Seller-only link -->
+          <li *ngIf="isSeller()">
+            <a routerLink="/seller/dashboard" class="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100 transition">
+              <i class="fa-solid fa-chart-line"></i> Seller Dashboard
+            </a>
+          </li>
+
+          <li>
+            <button
+              (click)="logout()"
+              class="w-full text-left flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100 transition"
+            >
+              <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+          </li>
+        </ul>
+      </div>
+    </ng-template>
+
+    <!-- Cart Icon -->
+    <div class="cursor-pointer relative">
+      <i class="fa-solid fa-cart-shopping text-xl"></i>
+      <!-- <span
+        *ngIf="cartCount > 0"
+        class="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full"
+      >
+        {{ cartCount }}
+      </span> -->
     </div>
   </div>
 </div>

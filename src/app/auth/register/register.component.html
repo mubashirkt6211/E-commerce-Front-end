@@ -72,7 +72,7 @@
           Enter a valid email
         </p>
       </div>
-
+      <!-- Password -->
       <div class="form-control relative w-full max-w-lg">
         <label class="label">
           <span class="label-text font-medium">Password</span>
@@ -98,12 +98,19 @@
         </div>
         <p
           class="text-sm text-red-500 mt-1"
-          *ngIf="f['password'].touched && f['password'].invalid"
+          *ngIf="f['password'].touched && f['password'].errors?.['required']"
         >
           Password is required
         </p>
+        <p
+          class="text-sm text-red-500 mt-1"
+          *ngIf="f['password'].touched && f['password'].errors?.['minlength']"
+        >
+          Password must be at least 6 characters
+        </p>
       </div>
 
+      <!-- Confirm Password -->
       <div class="form-control relative w-full max-w-lg">
         <label class="label">
           <span class="label-text font-medium">Confirm Password</span>
@@ -131,9 +138,15 @@
         </div>
         <p
           class="text-sm text-red-500 mt-1"
-          *ngIf="f['confirmPassword'].touched && f['confirmPassword'].invalid"
+          *ngIf="f['confirmPassword'].touched && f['confirmPassword'].errors?.['required']"
         >
           Confirm password is required
+        </p>
+        <p
+          class="text-sm text-red-500 mt-1"
+          *ngIf="registerForm.errors?.['mismatch'] && (f['confirmPassword'].touched || f['password'].touched)"
+        >
+          Password and Confirm Password do not match
         </p>
       </div>
 
@@ -143,18 +156,18 @@
           <label class="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
-              formControlName="isUser"
+              formControlName="isCUSTOMER"
               class="checkbox checkbox-sm"
             />
-            User
+            Customer
           </label>
           <label class="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
-              formControlName="isAdmin"
+              formControlName="isSELLER"
               class="checkbox checkbox-sm"
             />
-            Admin
+            Seller
           </label>
         </label>
       </div>
@@ -175,7 +188,15 @@
         </p>
       </div>
 
-      <button class="btn btn-neutral w-full mt-2">Register</button>
+      <button
+        class="btn btn-neutral w-full mt-2 flex justify-center items-center gap-2"
+        [disabled]="loading"
+      >
+        <span *ngIf="!loading">Register</span>
+        <span *ngIf="loading">
+          <i class="fa-solid fa-spinner fa-spin"></i> Registering...
+        </span>
+      </button>
 
       <div class="flex items-center my-4">
         <hr class="flex-grow border-gray-300" />

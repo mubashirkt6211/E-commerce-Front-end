@@ -1,0 +1,189 @@
+<div class="max-w-3xl mx-auto mt-10 font-outfit">
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <!-- Title -->
+      <h2 class="card-title text-2xl mb-4">
+        <i class="fa-solid fa-box-open text-black"></i>
+        Add Product
+      </h2>
+
+      <!-- Form -->
+      <form (ngSubmit)="onSubmit()" #productForm="ngForm" class="space-y-4">
+
+        <!-- Product Name -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Product Name</span>
+          </label>
+          <input
+            type="text"
+            name="name"
+            [(ngModel)]="product.name"
+            required
+            placeholder="Enter product name"
+            class="input input-bordered w-full"
+          />
+        </div>
+
+        <!-- Brand -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Brand</span>
+          </label>
+          <input
+            type="text"
+            name="brand"
+            [(ngModel)]="product.brand"
+            required
+            placeholder="Enter brand"
+            class="input input-bordered w-full"
+          />
+        </div>
+
+        <!-- Description -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Description</span>
+          </label>
+          <textarea
+            name="description"
+            [(ngModel)]="product.description"
+            rows="4"
+            required
+            placeholder="Enter product description"
+            class="textarea textarea-bordered w-full"
+          ></textarea>
+        </div>
+
+        <!-- Price & Discount -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">Price</span>
+            </label>
+            <input
+              type="number"
+              name="price"
+              [(ngModel)]="product.price"
+              required
+              placeholder="Enter price"
+              class="input input-bordered w-full"
+            />
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">Discount Price</span>
+            </label>
+            <input
+              type="number"
+              name="discountPrice"
+              [(ngModel)]="product.discountPrice"
+              placeholder="Optional"
+              class="input input-bordered w-full"
+            />
+          </div>
+        </div>
+
+        <!-- Quantity -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Quantity</span>
+          </label>
+          <input
+            type="number"
+            name="quantity"
+            [(ngModel)]="product.quantity"
+            required
+            placeholder="Enter quantity"
+            class="input input-bordered w-full"
+          />
+        </div>
+
+        <!-- Category -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Category</span>
+          </label>
+          <select
+            name="category"
+            [(ngModel)]="product.category"
+            required
+            class="select select-bordered w-full"
+          >
+            <option value="" disabled selected>Select category</option>
+            <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+          </select>
+        </div>
+
+        <!-- Images -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Product Images</span>
+          </label>
+          <input
+            type="file"
+            (change)="onFilesSelected($event)"
+            accept="image/*"
+            multiple
+            class="file-input file-input-bordered w-full"
+          />
+        </div>
+
+        <!-- Image Previews -->
+        <div *ngIf="previewUrls.length" class="flex flex-wrap gap-4 mt-2">
+          <img *ngFor="let url of previewUrls" [src]="url" class="h-28 w-28 object-cover rounded-lg border shadow-md"/>
+        </div>
+
+        <!-- Colors -->
+        <div *ngIf="colors.length" class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Available Colors</span>
+          </label>
+          <div class="flex flex-wrap gap-3">
+            <div *ngFor="let color of colors" (click)="toggleColor(color)" 
+                 class="w-8 h-8 rounded-full border shadow-md cursor-pointer"
+                 [ngStyle]="{'background-color': color}"
+                 [class.ring-2]="product.colorSelection[color]"
+                 [class.ring-blue-500]="product.colorSelection[color]">
+            </div>
+          </div>
+        </div>
+
+        <!-- Sizes -->
+        <div *ngIf="sizes.length" class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Available Sizes</span>
+          </label>
+          <div class="flex flex-wrap gap-3">
+            <button type="button" *ngFor="let size of sizes"
+                    (click)="toggleSize(size)"
+                    class="px-4 py-2 border rounded-lg transition"
+                    [class.bg-blue-600]="product.sizeSelection[size]"
+                    [class.text-white]="product.sizeSelection[size]">
+              {{ size }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Stock & Sale -->
+        <div class="flex gap-4 mt-4">
+          <label class="cursor-pointer flex items-center gap-2">
+            <input type="checkbox" [(ngModel)]="product.inStock" name="inStock" class="checkbox checkbox-primary"/>
+            In Stock
+          </label>
+          <label class="cursor-pointer flex items-center gap-2">
+            <input type="checkbox" [(ngModel)]="product.onSale" name="onSale" class="checkbox checkbox-accent"/>
+            On Sale
+          </label>
+        </div>
+
+        <!-- Submit -->
+        <div class="form-control mt-6">
+          <button type="submit" [disabled]="!productForm.form.valid" class="btn btn-neutral w-full">
+            <i class="fa-solid fa-plus-circle mr-2"></i> Add Product
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

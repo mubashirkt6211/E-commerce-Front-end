@@ -4,6 +4,8 @@ import { FeaturedComponent } from './home/featured/featured.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { ProductDetailsComponent } from './Product/product-details/product-details.component';
+import { AddProductComponent } from './admin/add-product/add-product.component';
+import { CategoryComponent } from './admin/category/category.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -11,9 +13,8 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'details/:id', component: ProductDetailsComponent },
-
-
-
+  { path: 'add-product', component: AddProductComponent },
+  { path: 'category', component: CategoryComponent },
 
 
 
