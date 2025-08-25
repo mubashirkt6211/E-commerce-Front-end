@@ -6,6 +6,7 @@ import { RegisterComponent } from './auth/register/register.component';
 import { ProductDetailsComponent } from './Product/product-details/product-details.component';
 import { AddProductComponent } from './admin/add-product/add-product.component';
 import { CategoryComponent } from './admin/category/category.component';
+import { ProductManageComponent } from './admin/product-manage/product-manage.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -15,6 +16,7 @@ export const routes: Routes = [
   { path: 'details/:id', component: ProductDetailsComponent },
   { path: 'add-product', component: AddProductComponent },
   { path: 'category', component: CategoryComponent },
+  { path: 'product-manage', component: ProductManageComponent },
 
 
 

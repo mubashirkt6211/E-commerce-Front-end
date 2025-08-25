@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { AuthService } from './auth.service';
 
 export interface Category {
   id: number;
@@ -11,28 +12,41 @@ export interface Category {
   providedIn: 'root'
 })
 export class CategoryService {
-
   private baseUrl = 'http://localhost:8080/api/category';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.authService.getToken() || '';
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  }
+
+  private handleTokenMissing<T>(): Observable<T> {
+    return throwError(() => ({ status: 401, message: 'JWT token missing. Please login.' }));
+  }
 
   createCategory(category: { name: string }): Observable<Category> {
-    return this.http.post<Category>(`${this.baseUrl}/create`, category);
+    if (!this.authService.isLoggedIn()) return this.handleTokenMissing();
+    return this.http.post<Category>(`${this.baseUrl}/create`, category, { headers: this.getAuthHeaders() });
   }
 
   getCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>(`${this.baseUrl}/all`);
+    if (!this.authService.isLoggedIn()) return this.handleTokenMissing();
+    return this.http.get<Category[]>(`${this.baseUrl}/all`, { headers: this.getAuthHeaders() });
   }
 
   deleteCategory(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/delete/${id}`);
+    if (!this.authService.isLoggedIn()) return this.handleTokenMissing();
+    return this.http.delete(`${this.baseUrl}/delete/${id}`, { headers: this.getAuthHeaders() });
   }
 
   updateCategory(id: number, category: { name: string }): Observable<Category> {
-    return this.http.put<Category>(`${this.baseUrl}/update/${id}`, category);
+    if (!this.authService.isLoggedIn()) return this.handleTokenMissing();
+    return this.http.put<Category>(`${this.baseUrl}/update/${id}`, category, { headers: this.getAuthHeaders() });
   }
 
   getCategoryByName(name: string): Observable<Category> {
-    return this.http.get<Category>(`${this.baseUrl}/name/${name}`);
+    if (!this.authService.isLoggedIn()) return this.handleTokenMissing();
+    return this.http.get<Category>(`${this.baseUrl}/name/${name}`, { headers: this.getAuthHeaders() });
   }
 }

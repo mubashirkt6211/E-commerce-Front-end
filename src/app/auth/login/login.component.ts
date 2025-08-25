@@ -59,11 +59,11 @@ export class LoginComponent {
       next: (res) => {
         this.loading = false;
         this.toastr.success('Login successful!', 'Success');
-        this.router.navigate(['/']); // change route as needed
+        this.router.navigate(['/']); // redirect to category page
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err.error?.message || 'Login failed!';
+        this.errorMessage = err.error?.message || err.message || 'Login failed!';
         this.toastr.error(this.errorMessage, 'Error');
       },
     });

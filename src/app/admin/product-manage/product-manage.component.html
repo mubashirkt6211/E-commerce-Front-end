@@ -1,0 +1,75 @@
+<div class="max-w-7xl mx-auto mt-12 font-outfit px-4">
+  <h1 class="text-3xl font-bold mb-8 text-black">All Products</h1>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-12 text-gray-500">
+    <i class="fa-solid fa-spinner fa-spin text-2xl"></i> Loading products...
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="errorMessage" class="text-center py-12 text-red-500">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Products table -->
+  <div *ngIf="!loading && products.length" class="overflow-x-auto rounded-lg shadow-lg">
+    <table class="min-w-full table-auto text-sm text-black">
+      <thead class="bg-base-100">
+        <tr>
+          <th class="w-8 text-center px-3 py-2">#</th>
+          <th class="w-32 text-left px-3 py-2">Name</th>
+          <th class="w-24 text-left px-3 py-2">Brand</th>
+          <th class="w-24 text-left px-3 py-2">Category</th>
+          <th class="w-20 text-right px-3 py-2">Price</th>
+          <th class="w-20 text-right px-3 py-2">Discount</th>
+          <th class="w-16 text-center px-3 py-2">Qty</th>
+          <th class="w-28 text-center px-3 py-2">Colors</th>
+          <th class="w-28 text-center px-3 py-2">Sizes</th>
+          <th class="w-32 text-center px-3 py-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products; let i = index" 
+            class="hover:bg-base-200 transition-all duration-200">
+          <td class="text-center px-3 py-2">{{ i + 1 }}</td>
+          <td class="text-left px-3 py-2">{{ product.name }}</td>
+          <td class="text-left px-3 py-2">{{ product.brand }}</td>
+          <td class="text-left px-3 py-2">{{ product.category.name || '-' }}</td>
+          <td class="text-right px-3 py-2">{{ product.price | currency:'INR':'symbol':'1.0-0' }}</td>
+          <td class="text-right px-3 py-2">
+            {{ product.discountPrice ? (product.discountPrice | currency:'INR':'symbol':'1.0-0') : '-' }}
+          </td>
+          <td class="text-center px-3 py-2">{{ product.quantity }}</td>
+          <td class="px-3 py-2">
+            <div class="flex justify-center gap-1 flex-wrap">
+              <span *ngFor="let color of product.colors"
+                    class="w-5 h-5 rounded-full border border-gray-400 shadow-sm"
+                    [ngStyle]="{'background-color': color}"
+                    [attr.title]="color">
+              </span>
+            </div>
+          </td>
+          <td class="px-3 py-2">
+            <div class="flex justify-center gap-1 flex-wrap">
+              <span *ngFor="let size of product.sizes" class="badge badge-outline badge-sm">{{ size }}</span>
+            </div>
+          </td>
+          <td class="px-3 py-2">
+            <div class="flex justify-center gap-2 flex-wrap">
+              <button class="btn btn-sm btn-neutral" (click)="editProduct(product)">Edit</button>
+<button class="btn btn-sm btn-primary" 
+        (click)="product.id !== undefined && deleteProduct(product.id)">
+  Delete
+</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- No products -->
+  <div *ngIf="!loading && !products.length" class="text-center py-12 text-gray-400">
+    No products found.
+  </div>
+</div>

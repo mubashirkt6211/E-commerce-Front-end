@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { CategoryService, Category } from '../../shared/category.service';
+import { AuthService } from '../../shared/auth.service';
 
 @Component({
   selector: 'app-category',
@@ -11,27 +13,35 @@ import { CategoryService, Category } from '../../shared/category.service';
   styleUrls: ['./category.component.css']
 })
 export class CategoryComponent implements OnInit {
-  category: Category = { id: 0, name: '' }; // include id for update
+  category: Category = { id: 0, name: '' };
   categories: Category[] = [];
   openForm = false;
   editingCategory: Category | null = null;
 
-  constructor(private categoryService: CategoryService) {}
+  constructor(
+    private categoryService: CategoryService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    if (!this.authService.isLoggedIn()) {
+      alert('You are not logged in. Redirecting to login.');
+      this.router.navigate(['/login']);
+      return;
+    }
     this.loadCategories();
   }
 
   loadCategories(): void {
     this.categoryService.getCategories().subscribe({
-      next: data => (this.categories = data),
-      error: err => console.error('Error loading categories', err)
+      next: data => this.categories = data,
+      error: err => this.handleAuthError(err, 'loading categories')
     });
   }
 
   toggleForm(): void {
     if (this.editingCategory) {
-      // Cancel edit
       this.resetForm();
     } else {
       this.openForm = !this.openForm;
@@ -39,42 +49,42 @@ export class CategoryComponent implements OnInit {
   }
 
   onSubmit(): void {
+    if (!this.category.name.trim()) {
+      alert('Category name cannot be empty');
+      return;
+    }
+
     if (this.editingCategory) {
-      // Update category
       this.categoryService.updateCategory(this.category.id!, this.category).subscribe({
         next: res => {
-          console.log('Category updated:', res);
           this.resetForm();
           this.loadCategories();
         },
-        error: err => console.error('Error updating category', err)
+        error: err => this.handleAuthError(err, 'updating category')
       });
     } else {
-      // Create category
       this.categoryService.createCategory(this.category).subscribe({
         next: res => {
-          console.log('Category created:', res);
           this.resetForm();
           this.loadCategories();
         },
-        error: err => console.error('Error creating category', err)
+        error: err => this.handleAuthError(err, 'creating category')
       });
     }
   }
 
   editCategory(cat: Category): void {
-    this.category = { ...cat }; // copy values
+    this.category = { ...cat };
     this.editingCategory = cat;
     this.openForm = true;
   }
 
   deleteCategory(id: number): void {
+    if (!confirm('Are you sure you want to delete this category?')) return;
+
     this.categoryService.deleteCategory(id).subscribe({
-      next: () => {
-        console.log('Category deleted');
-        this.loadCategories();
-      },
-      error: err => console.error('Error deleting category', err)
+      next: () => this.loadCategories(),
+      error: err => this.handleAuthError(err, 'deleting category')
     });
   }
 
@@ -82,5 +92,14 @@ export class CategoryComponent implements OnInit {
     this.category = { id: 0, name: '' };
     this.openForm = false;
     this.editingCategory = null;
+  }
+
+  private handleAuthError(err: any, action: string): void {
+    console.error(`Error ${action}:`, err);
+    if (err.status === 401 || err.status === 403) {
+      alert('Unauthorized! Please login again.');
+      this.authService.logout();
+      this.router.navigate(['/login']);
+    }
   }
 }
