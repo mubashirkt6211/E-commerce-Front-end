@@ -1,118 +1,159 @@
-<div class="max-w-4xl mx-auto mt-12 font-outfit">
-
-  <h1 class="text-3xl font-bold mb-6 flex items-center gap-3">
-    <i class="fa-solid fa-box-open text-black"></i> Add New Product
+<div class="max-w-6xl mx-auto mt-12 font-outfit px-4">
+  <!-- Main Heading -->
+  <h1 class="text-3xl font-bold mb-12 flex items-center gap-3 text-gray-800 animate-fadeIn">
+    <i class="fa-solid fa-box-open text-black"></i>
+    Add New Product
   </h1>
 
-  <!-- STEP INDICATOR -->
-  <div class="flex justify-between mb-6">
-    <div class="flex-1 text-center py-2 border-b-2" [class.border-black]="step === 1">1. Product Details</div>
-    <div class="flex-1 text-center py-2 border-b-2" [class.border-black]="step === 2">2. Shipping & Category</div>
-    <div class="flex-1 text-center py-2 border-b-2" [class.border-black]="step === 3">3. Colors & Sizes</div>
-  </div>
+  <!-- Step Progress Indicator -->
+ <!-- STEP PROGRESS BAR -->
+<div class="relative w-full bg-gray-200 rounded-full h-3 mb-12 overflow-hidden shadow-inner">
+  <!-- Filled portion -->
+  <div
+    class="bg-black h-3 rounded-full transition-all duration-500"
+    [style.width.%]="(step / 3) * 100"
+  ></div>
+</div>
 
-  <form (ngSubmit)="onSubmit()" #productForm="ngForm" class="space-y-6">
+<!-- Optional Step Labels -->
+<div class="flex justify-between mb-6 text-sm font-medium text-gray-600">
+  <span [class.text-black]="step >= 1">Product</span>
+  <span [class.text-black]="step >= 2">Shipping</span>
+  <span [class.text-black]="step >= 3">Colors & Sizes</span>
+</div>
+
+
+  <form (ngSubmit)="onSubmit()" #productForm="ngForm" class="space-y-10">
 
     <!-- STEP 1: PRODUCT DETAILS -->
-    <div *ngIf="step === 1" class="card bg-base-100 shadow-lg rounded-xl p-6 hover:shadow-2xl transition">
-      <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Product Details</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input type="text" name="name" [(ngModel)]="product.name" required placeholder="Product Name *" class="input input-bordered w-full" />
-        <input type="text" name="brand" [(ngModel)]="product.brand" required placeholder="Brand *" class="input input-bordered w-full" />
-        <textarea name="description" [(ngModel)]="product.description" rows="4" required placeholder="Description *" class="textarea textarea-bordered w-full md:col-span-2"></textarea>
-        <input type="number" name="weight" [(ngModel)]="product.weight" required placeholder="Weight (kg) *" class="input input-bordered w-full" />
-        <input type="number" name="quantity" [(ngModel)]="product.quantity" required placeholder="Quantity *" class="input input-bordered w-full" />
-        <input type="number" name="price" [(ngModel)]="product.price" required placeholder="Price *" class="input input-bordered w-full" />
-        <input type="number" name="discountPrice" [(ngModel)]="product.discountPrice" placeholder="Discount Price" class="input input-bordered w-full" />
+    <div *ngIf="step === 1" class="card bg-white shadow-xl rounded-2xl p-8 hover:shadow-2xl transition-all duration-500 animate-slideInRight">
+      <h2 class="text-2xl font-semibold mb-6 border-b pb-2">Step 1: Product Details</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+        <input type="text" name="name" [(ngModel)]="product.name" required placeholder="Product Name *"
+               class="input input-bordered rounded-xl w-full hover:shadow-md transition duration-300" />
+        <input type="text" name="brand" [(ngModel)]="product.brand" required placeholder="Brand *"
+               class="input input-bordered rounded-xl w-full hover:shadow-md transition duration-300" />
       </div>
 
-      <div class="flex gap-6 mt-4">
+      <textarea name="description" [(ngModel)]="product.description" rows="4" required
+                placeholder="Product Description *" class="textarea textarea-bordered w-full mb-6 hover:shadow-md transition duration-300"></textarea>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+        <input type="number" name="weight" [(ngModel)]="product.weight" required placeholder="Weight (kg) *"
+               class="input input-bordered rounded-xl w-full hover:shadow-md transition duration-300" />
+        <input type="number" name="quantity" [(ngModel)]="product.quantity" required placeholder="Quantity *"
+               class="input input-bordered w-full rounded-xl hover:shadow-md transition duration-300" />
+        <input type="number" name="price" [(ngModel)]="product.price" required placeholder="Price *"
+               class="input input-bordered rounded-xl w-full hover:shadow-md transition duration-300" />
+        <input type="number" name="discountPrice" [(ngModel)]="product.discountPrice" placeholder="Discount Price"
+               class="input input-bordered rounded-xl w-full hover:shadow-md transition duration-300" />
+      </div>
+
+      <div class="flex gap-6 mb-6">
         <label class="flex items-center gap-2 cursor-pointer">
-          <input type="checkbox" [(ngModel)]="product.inStock" name="inStock" class="checkbox checkbox-neutral"/>
-          In Stock
+          <input type="checkbox" [(ngModel)]="product.inStock" name="inStock" class="checkbox checkbox-neutral" /> In Stock
         </label>
         <label class="flex items-center gap-2 cursor-pointer">
-          <input type="checkbox" [(ngModel)]="product.onSale" name="onSale" class="checkbox checkbox-neutral"/>
-          On Sale
+          <input type="checkbox" [(ngModel)]="product.onSale" name="onSale" class="checkbox checkbox-neutral" /> On Sale
         </label>
       </div>
 
-      <div class="flex justify-end mt-6">
-        <button type="button" class="btn btn-neutral" (click)="step=2">Next →</button>
+      <div class="flex justify-end">
+        <button type="button" class="btn btn-neutral px-6 hover:scale-105 transition-transform" (click)="step = 2">Next →</button>
       </div>
     </div>
 
     <!-- STEP 2: SHIPPING & CATEGORY -->
-    <div *ngIf="step === 2" class="card bg-base-100 shadow-lg rounded-xl p-6 hover:shadow-2xl transition">
-      <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Shipping & Category</h2>
+    <div *ngIf="step === 2" class="card bg-white shadow-xl rounded-2xl p-8 transition-all duration-500 animate-slideInRight">
+      <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2">
+        <i class="fa-solid fa-truck"></i> Shipping & Category
+      </h2>
 
-      <!-- Shipping Types -->
-      <div class="mb-4">
-        <label class="label"><span class="label-text font-medium">Shipping Options</span></label>
-        <div class="flex flex-wrap gap-3">
-          <label *ngFor="let type of availableShippingTypes" class="cursor-pointer">
-            <input type="checkbox" [value]="type" (change)="toggleShippingTypeButton(type)" [checked]="product.shippingTypes.includes(type)" class="checkbox checkbox-neutral mr-2"/>
+      <div class="mb-6">
+        <label class="label"><span class="label-text font-medium">Shipping Options *</span></label>
+        <div class="flex flex-wrap gap-4">
+          <label *ngFor="let type of availableShippingTypes" class="flex items-center rounded-xl gap-2 cursor-pointer">
+            <input type="checkbox" class="checkbox checkbox-neutral"
+                   [checked]="product.shippingTypes.includes(type)"
+                   (change)="toggleShippingType(type)" />
             {{ type | titlecase }}
           </label>
         </div>
-        <p class="text-sm text-gray-500 mt-1">{{ product.shippingTypes.length }} selected</p>
       </div>
 
-      <!-- Category & Images -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <select name="category" [(ngModel)]="product.category" required class="select select-bordered w-full">
-          <option value="" disabled selected>Select Category *</option>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <select name="category" [(ngModel)]="product.category" required class="select select-bordered w-full hover:shadow-md transition duration-300">
+          <option value="" disabled>Select Category *</option>
           <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
         </select>
-        <input type="file" (change)="onFilesSelected($event)" accept="image/*" multiple class="file-input file-input-bordered w-full" />
+
+        <input type="file" (change)="onFilesSelected($event)" accept="image/*" multiple
+               class="file-input file-input-bordered rounded-xl w-full hover:shadow-md transition duration-300" />
       </div>
 
-      <div *ngIf="previewUrls.length" class="flex flex-wrap gap-4 mt-4">
-        <img *ngFor="let url of previewUrls" [src]="url" class="h-28 w-28 object-cover rounded-lg border shadow-md"/>
+      <div *ngIf="previewUrls.length" class="flex flex-wrap gap-4 mb-6">
+        <img *ngFor="let url of previewUrls" [src]="url"
+             class="h-28 w-28 object-cover rounded-xl border shadow hover:scale-105 transition-transform duration-300" />
       </div>
 
-      <div class="flex justify-between mt-6">
-        <button type="button" class="btn btn-outline" (click)="step=1">← Back</button>
-        <button type="button" class="btn btn-neutral" (click)="step=3">Next →</button>
+      <div class="flex justify-between">
+        <button type="button" class="btn btn-outline px-6 hover:scale-105 transition-transform" (click)="step = 1">← Back</button>
+        <button type="button" class="btn btn-neutral px-6 hover:scale-105 transition-transform" (click)="step = 3">Next →</button>
       </div>
     </div>
 
-    <!-- STEP 3: COLORS & SIZES + SUBMIT -->
-    <div *ngIf="step === 3" class="card bg-base-100 shadow-lg rounded-xl p-6 hover:shadow-2xl transition">
-      <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Colors & Sizes</h2>
+    <!-- STEP 3: COLORS & SIZES -->
+    <div *ngIf="step === 3" class="card bg-white shadow-xl rounded-2xl p-8 transition-all duration-500 animate-slideInRight">
+      <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2">
+        <i class="fa-solid fa-palette"></i> Colors & Sizes
+      </h2>
 
       <!-- Colors -->
-      <div class="mb-4">
+      <div class="mb-6">
         <label class="label"><span class="label-text font-medium">Available Colors</span></label>
+        <div class="flex items-center gap-3 mb-4">
+          <input type="color" [(ngModel)]="selectedColor" name="selectedColor"
+                 class="w-12 h-12 p-0 border rounded-full cursor-pointer shadow-md transition-transform hover:scale-110" />
+          <button type="button" class="btn btn-sm btn-neutral hover:scale-105 transition-transform" (click)="addColor()">Add</button>
+        </div>
+
         <div class="flex flex-wrap gap-3">
-          <div *ngFor="let color of colors" (click)="toggleColor(color)" 
-               class="w-10 h-10 rounded-full border shadow-md cursor-pointer transition-transform hover:scale-110"
-               [ngStyle]="{'background-color': color}"
-               [class.ring-2]="product.colorSelection[color]"
-               [class.ring-indigo-500]="product.colorSelection[color]">
+          <div *ngFor="let color of product.colors" class="relative group">
+            <div class="w-10 h-10 rounded-full border-2 shadow-md transition-transform transform hover:scale-110"
+                 [ngStyle]="{ 'background-color': color }" title="{{ color }}"></div>
+            <button type="button" (click)="removeColor(color)"
+                    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity transform hover:scale-125 shadow-lg"
+                    aria-label="Remove color">✕</button>
           </div>
         </div>
       </div>
 
       <!-- Sizes -->
-      <div>
+      <div class="mb-6">
         <label class="label"><span class="label-text font-medium">Available Sizes</span></label>
+        <div class="flex gap-3 mb-4">
+          <input type="text" [(ngModel)]="newSize" name="newSize" placeholder="e.g. S, M, L"
+                 class="input input-bordered w-40 hover:shadow-md transition duration-300 " />
+          <button type="button" class="btn btn-sm btn-neutral hover:scale-105 transition-transform" (click)="addSize()">Add</button>
+        </div>
+
         <div class="flex flex-wrap gap-3">
-          <button type="button" *ngFor="let size of sizes"
-                  (click)="toggleSize(size)"
-                  class="px-5 py-2 border rounded-lg transition hover:bg-black hover:text-white"
-                  [class.bg-black]="product.sizeSelection[size]"
-                  [class.text-white]="product.sizeSelection[size]">
-            {{ size }}
-          </button>
+          <div *ngFor="let size of product.sizes" class="flex items-center gap-2 bg-gray-200 px-3 py-1 rounded-full shadow-sm hover:scale-105 transition-transform">
+            <span class="font-medium">{{ size }}</span>
+            <button type="button" (click)="removeSize(size)" class="text-red-500 font-bold">✕</button>
+          </div>
         </div>
       </div>
 
-      <div class="flex justify-between mt-6">
-        <button type="button" class="btn btn-outline" (click)="step=2">← Back</button>
-        <button type="submit" [disabled]="!productForm.form.valid || loading" class="btn btn-neutral">Submit</button>
+      <div class="flex justify-between">
+        <button type="button" class="btn btn-outline px-6 hover:scale-105 transition-transform" (click)="step = 2">← Back</button>
+        <button type="submit" class="btn btn-neutral px-6 hover:scale-105 transition-transform" [disabled]="!productForm.form.valid || loading">
+          <span *ngIf="!loading">Submit</span>
+          <span *ngIf="loading"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Submitting...</span>
+        </button>
       </div>
     </div>
-
   </form>
 </div>
+

@@ -1,12 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-
-interface Category {
-  id: number;
-  name: string;
-}
+import { HttpClientModule } from '@angular/common/http';
+import { ProductService, ShippingType } from '../../shared/product.service';
+import { CategoryService, Category } from '../../shared/category.service';
 
 @Component({
   selector: 'app-product',
@@ -17,7 +14,7 @@ interface Category {
 })
 export class AddProductComponent implements OnInit {
 
-  step = 1; // <-- current step of the multi-step form
+  step = 1;
 
   product = {
     name: '',
@@ -26,12 +23,12 @@ export class AddProductComponent implements OnInit {
     price: 0,
     discountPrice: 0,
     quantity: 0,
-    category: '',              // Category ID
+    category: '', // store categoryId
     weight: 0,
-    shippingTypes: [] as string[], // Multiple shipping options
+    shippingTypes: [] as ShippingType[],   
     images: [] as File[],
-    colorSelection: {} as Record<string, boolean>,
-    sizeSelection: {} as Record<string, boolean>,
+    colors: [] as string[],
+    sizes: [] as string[],
     inStock: true,
     onSale: false
   };
@@ -40,65 +37,84 @@ export class AddProductComponent implements OnInit {
   categories: Category[] = [];
   loading = false;
   errorMessage = '';
+  successMessage = '';
 
-  colors: string[] = [
-    '#000000','#FFFFFF','#FF0000','#00FF00','#0000FF',
-    '#FFFF00','#FFA500','#800080','#00CED1','#FFC0CB'
+  // UI helpers
+  selectedColor: string = '#000000';
+  newSize: string = '';
+
+  availableShippingTypes: ShippingType[] = [
+    ShippingType.NORMAL,
+    ShippingType.FAST,
+    ShippingType.SUPERFAST
   ];
-  sizes: string[] = ['S','M','L','XL','XXL'];
-  availableShippingTypes: string[] = ['STANDARD', 'NORMAL', 'SUPERFAST'];
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private productService: ProductService,
+    private categoryService: CategoryService
+  ) {}
 
   ngOnInit(): void {
     this.loadCategories();
   }
 
-  /** Load categories from backend */
+  // ✅ Categories
   loadCategories(): void {
-    this.http.get<Category[]>('http://localhost:8080/api/category/all')
-      .subscribe({
-        next: data => this.categories = data,
-        error: err => {
-          console.error('Failed to load categories', err);
-          this.errorMessage = 'Could not load categories';
-        }
-      });
+    this.categoryService.getCategories().subscribe({
+      next: data => this.categories = data,
+      error: err => {
+        console.error('Failed to load categories', err);
+        this.errorMessage = 'Could not load categories';
+      }
+    });
   }
 
-  /** Handle file input with max 3 images */
+  // ✅ Images
   onFilesSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files) return;
 
     let filesArray = Array.from(input.files);
+
     if (filesArray.length > 3) {
       filesArray = filesArray.slice(0, 3);
-      alert('You can only upload up to 3 images.');
+      alert('⚠️ You can only upload up to 3 images.');
     }
 
     this.product.images = filesArray;
-    this.previewUrls = [];
 
-    filesArray.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = () => this.previewUrls.push(reader.result as string);
-      reader.readAsDataURL(file);
-    });
+    // cleanup old preview URLs
+    this.previewUrls.forEach(url => URL.revokeObjectURL(url));
+    this.previewUrls = filesArray.map(file => URL.createObjectURL(file));
   }
 
-  /** Toggle color selection */
-  toggleColor(color: string) {
-    this.product.colorSelection[color] = !this.product.colorSelection[color];
+  // ✅ Colors
+  addColor() {
+    if (this.selectedColor && !this.product.colors.includes(this.selectedColor)) {
+      this.product.colors.push(this.selectedColor);
+      this.selectedColor = '#000000'; // reset picker
+    }
   }
 
-  /** Toggle size selection */
-  toggleSize(size: string) {
-    this.product.sizeSelection[size] = !this.product.sizeSelection[size];
+  removeColor(color: string) {
+    this.product.colors = this.product.colors.filter(c => c !== color);
   }
 
-  /** Toggle shipping type for checkbox or button */
-  toggleShippingTypeButton(type: string) {
+  // ✅ Sizes
+  addSize() {
+    const size = this.newSize.trim().toUpperCase();
+    if (size && !this.product.sizes.includes(size)) {
+      this.product.sizes.push(size);
+      this.newSize = '';
+    }
+  }
+
+  removeSize(size: string) {
+    this.product.sizes = this.product.sizes.filter(s => s !== size);
+  }
+
+
+  toggleShippingType(type: ShippingType) {
     if (this.product.shippingTypes.includes(type)) {
       this.product.shippingTypes = this.product.shippingTypes.filter(t => t !== type);
     } else {
@@ -106,91 +122,67 @@ export class AddProductComponent implements OnInit {
     }
   }
 
-  /** Toggle shipping type from checkbox input */
-  toggleShippingType(event: Event) {
-    const checkbox = event.target as HTMLInputElement;
-    const value = checkbox.value;
-
-    if (checkbox.checked) {
-      if (!this.product.shippingTypes.includes(value)) this.product.shippingTypes.push(value);
-    } else {
-      this.product.shippingTypes = this.product.shippingTypes.filter(t => t !== value);
-    }
-  }
-
-  /** Navigate to next step */
-  nextStep() {
-    if (this.step < 3) this.step++;
-  }
-
-  /** Navigate to previous step */
-  prevStep() {
-    if (this.step > 1) this.step--;
-  }
-
-  /** Submit the form */
+  // ✅ Submit
   onSubmit(): void {
-    if (!this.product.name || !this.product.category || !this.product.shippingTypes.length) {
-      this.errorMessage = 'Name, category, and at least one shipping type are required';
+    if (!this.product.name || !this.product.category || this.product.shippingTypes.length === 0) {
+      this.errorMessage = '❌ Name, category, and at least one shipping option are required';
       return;
     }
 
     this.loading = true;
     this.errorMessage = '';
+    this.successMessage = '';
 
-    const formData = new FormData();
-    formData.append('name', this.product.name);
-    formData.append('brand', this.product.brand);
-    formData.append('description', this.product.description);
-    formData.append('price', this.product.price.toString());
-    if (this.product.discountPrice) formData.append('discountPrice', this.product.discountPrice.toString());
-    formData.append('quantity', this.product.quantity.toString());
-    formData.append('weight', this.product.weight.toString());
-    formData.append('categoryId', this.product.category);
-    formData.append('inStock', this.product.inStock.toString());
-    formData.append('onSale', this.product.onSale.toString());
+    const productPayload = {
+      name: this.product.name,
+      brand: this.product.brand,
+      description: this.product.description,
+      price: this.product.price,
+      discountPrice: this.product.discountPrice,
+      quantity: this.product.quantity,
+      weight: this.product.weight,
+      categoryId: +this.product.category,
+      inStock: this.product.inStock,
+      onSale: this.product.onSale,
+      colors: this.product.colors,
+      sizes: this.product.sizes,
+      shippingClasses: this.product.shippingTypes   // ✅ backend expects shippingClasses
+    };
 
-    // Images
-    this.product.images.forEach(file => formData.append('images', file));
+    const formData = ProductService.toFormData(productPayload, this.product.images);
 
-    // Colors and sizes
-    const selectedColors = Object.keys(this.product.colorSelection).filter(c => this.product.colorSelection[c]);
-    const selectedSizes = Object.keys(this.product.sizeSelection).filter(s => this.product.sizeSelection[s]);
-    formData.append('colors', JSON.stringify(selectedColors));
-    formData.append('sizes', JSON.stringify(selectedSizes));
-
-    // Shipping types
-    formData.append('shippingTypes', JSON.stringify(this.product.shippingTypes));
-
-    // TODO: submit to backend
-    // this.http.post('http://localhost:8080/api/item/create', formData).subscribe({...});
-    console.log('FormData to submit:', formData);
-
-    this.loading = false;
-    this.resetForm();
+    this.productService.createProduct(formData).subscribe({
+      next: () => {
+        this.successMessage = '✅ Product created successfully!';
+        this.resetForm();
+        this.loading = false;
+      },
+      error: err => {
+        console.error('Create product error:', err);
+        this.errorMessage = '❌ Something went wrong. Try again.';
+        this.loading = false;
+      }
+    });
   }
+  
 
-  /** Reset form */
+  // ✅ Reset
   resetForm(): void {
     this.product = {
-      name: '',
-      brand: '',
-      description: '',
-      price: 0,
-      discountPrice: 0,
-      quantity: 0,
-      category: '',
-      weight: 0,
-      shippingTypes: [],
-      images: [],
-      colorSelection: {},
-      sizeSelection: {},
-      inStock: true,
-      onSale: false
+      name: '', brand: '', description: '', price: 0, discountPrice: 0,
+      quantity: 0, category: '', weight: 0, shippingTypes: [],
+      images: [], colors: [], sizes: [],
+      inStock: true, onSale: false
     };
+
+    this.previewUrls.forEach(url => URL.revokeObjectURL(url));
     this.previewUrls = [];
+
     this.errorMessage = '';
+    this.successMessage = '';
     this.step = 1;
     this.loading = false;
+    this.selectedColor = '#000000';
+    this.newSize = '';
   }
 }
