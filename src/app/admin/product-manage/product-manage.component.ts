@@ -1,12 +1,25 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
+import { FormsModule, NgForm } from '@angular/forms';
 import { ProductService, Product } from '../../shared/product.service';
 import { CategoryService, Category } from '../../shared/category.service';
+
+interface UpdateProductDTO {
+  id: number;
+  name: string;
+  brand: string;
+  category: { id: number };
+  price: number;
+  discountPrice?: number;
+  quantity: number;
+  onSale: boolean;
+  inStock: boolean;
+}
 
 @Component({
   selector: 'app-product-manage',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './product-manage.component.html',
   styleUrls: ['./product-manage.component.css'],
   providers: [CurrencyPipe]
@@ -14,8 +27,12 @@ import { CategoryService, Category } from '../../shared/category.service';
 export class ProductManageComponent implements OnInit {
 
   products: Product[] = [];
+  categories: Category[] = [];
   loading = false;
   errorMessage = '';
+
+  editingProduct: Product | null = null;
+  editedValues: UpdateProductDTO | null = null;
 
   constructor(
     private productService: ProductService,
@@ -25,6 +42,7 @@ export class ProductManageComponent implements OnInit {
 
   ngOnInit() {
     this.loadProducts();
+    this.loadCategories();
   }
 
   loadProducts() {
@@ -32,28 +50,62 @@ export class ProductManageComponent implements OnInit {
     this.productService.getProducts().subscribe({
       next: data => {
         this.products = data;
-        this.loading = false;
+        this.errorMessage = '';
       },
       error: err => {
         console.error('Error loading products:', err);
-        if (err.status === 401 || err.status === 403) {
-          this.errorMessage = 'Unauthorized! Please login.';
-          alert(this.errorMessage);
-        } else {
-          this.errorMessage = 'Failed to load products';
-        }
-        this.loading = false;
-      }
+        this.errorMessage = (err.status === 401 || err.status === 403)
+          ? 'Unauthorized! Please login.'
+          : 'Failed to load products. Please try again later.';
+      },
+      complete: () => this.loading = false
     });
   }
 
-  formatPrice(value: number): string {
-    return this.currencyPipe.transform(value, 'USD', 'symbol', '1.2-2', 'en-US') ?? '';
+  loadCategories() {
+    this.categoryService.getCategories().subscribe({
+      next: data => this.categories = data,
+      error: err => console.error('Error loading categories:', err)
+    });
   }
 
-  editProduct(product: Product) {
-    // Replace with your actual edit logic / route
-    alert(`Edit product: ${product.name}`);
+  startEdit(product: Product) {
+    this.editingProduct = product;
+    this.editedValues = {
+      id: product.id!,
+      name: product.name,
+      brand: product.brand,
+      category: { id: product.category?.id || 0 },
+      price: product.price,
+      discountPrice: product.discountPrice,
+      quantity: product.quantity,
+      onSale: product.onSale,
+      inStock: product.inStock
+    };
+    setTimeout(() => document.getElementById('nameInput')?.focus(), 0);
+  }
+
+  cancelEdit() {
+    this.editingProduct = null;
+    this.editedValues = null;
+    this.errorMessage = '';
+  }
+
+  saveEdit(form: NgForm) {
+    if (!this.editedValues || !form.valid) return;
+
+    // ✅ Send JSON directly instead of FormData
+    this.productService.updateProduct(this.editedValues.id, this.editedValues).subscribe({
+      next: () => {
+        this.showToast('✅ Product updated successfully');
+        this.loadProducts();
+        this.cancelEdit();
+      },
+      error: err => {
+        console.error('Error updating product:', err);
+        this.showToast('❌ Failed to update product');
+      }
+    });
   }
 
   deleteProduct(id: number) {
@@ -61,17 +113,21 @@ export class ProductManageComponent implements OnInit {
 
     this.productService.deleteProduct(id).subscribe({
       next: () => {
-        alert('Product deleted successfully');
+        this.showToast('🗑️ Product deleted successfully');
         this.loadProducts();
       },
       error: err => {
         console.error('Error deleting product:', err);
-        if (err.status === 401 || err.status === 403) {
-          alert('Unauthorized! Please login.');
-        } else {
-          alert('Failed to delete product.');
-        }
+        this.showToast((err.status === 401 || err.status === 403)
+          ? 'Unauthorized! Please login.'
+          : '❌ Failed to delete product');
       }
     });
+  }
+
+
+
+  showToast(message: string) {
+    alert(message); // Replace with a proper toast library if needed
   }
 }

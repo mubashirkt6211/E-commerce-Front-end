@@ -22,10 +22,10 @@ export interface Product {
   quantity: number;
   price: number;
   discountPrice?: number;
-  category: Category;          
+  category: Category;
   weight: number;
-  shippingClass: ShippingType; 
-  images?: string[];           
+  shippingClass: ShippingType;
+  images?: string[];
   colors: string[];
   sizes: string[];
   inStock: boolean;
@@ -74,13 +74,17 @@ export class ProductService {
     return this.http.delete<void>(`${this.baseUrl}/delete/${id}`, { headers: this.getAuthHeaders() });
   }
 
-  /** Update an existing product (FormData) */
-  updateProduct(id: number, productData: FormData): Observable<Product> {
+  /** Update a product (JSON payload) */
+  updateProduct(id: number, productData: Partial<Product>): Observable<Product> {
     if (!this.authService.isLoggedIn()) return this.handleTokenMissing();
-    return this.http.put<Product>(`${this.baseUrl}/update/${id}`, productData, { headers: this.getAuthHeaders() });
+    return this.http.put<Product>(
+      `${this.baseUrl}/update/${id}`,
+      productData, // send JSON directly
+      { headers: this.getAuthHeaders() }
+    );
   }
 
-  /** Helper: convert Product object to FormData */
+  /** Helper: convert Product object to FormData (for creation) */
   static toFormData(product: Partial<Product>, files: File[] = []): FormData {
     const formData = new FormData();
     formData.append(

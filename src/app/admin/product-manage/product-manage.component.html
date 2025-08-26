@@ -1,4 +1,5 @@
 <div class="max-w-7xl mx-auto mt-12 font-outfit px-4">
+
   <h1 class="text-3xl font-bold mb-8 text-black">All Products</h1>
 
   <!-- Loading -->
@@ -7,44 +8,43 @@
   </div>
 
   <!-- Error message -->
-  <div *ngIf="errorMessage" class="text-center py-12 text-red-500">
+  <div *ngIf="errorMessage" class="text-center py-4 text-red-500">
     {{ errorMessage }}
   </div>
 
-  <!-- Products table -->
+  <!-- Products Table -->
   <div *ngIf="!loading && products.length" class="overflow-x-auto rounded-lg shadow-lg">
     <table class="min-w-full table-auto text-sm text-black">
       <thead class="bg-base-100">
         <tr>
-          <th class="w-8 text-center px-3 py-2">#</th>
-          <th class="w-32 text-left px-3 py-2">Name</th>
-          <th class="w-24 text-left px-3 py-2">Brand</th>
-          <th class="w-24 text-left px-3 py-2">Category</th>
-          <th class="w-20 text-right px-3 py-2">Price</th>
-          <th class="w-20 text-right px-3 py-2">Discount</th>
+          <th class="w-8 text-center px-3 py-2">ID</th>
+          <th class="min-w-[120px] text-left px-3 py-2">Name</th>
+          <th class="min-w-[100px] text-left px-3 py-2">Brand</th>
+          <th class="min-w-[100px] text-left px-3 py-2">Category</th>
+          <th class="w-24 text-right px-3 py-2">Price</th>
+          <th class="w-24 text-right px-3 py-2">Discount</th>
           <th class="w-16 text-center px-3 py-2">Qty</th>
           <th class="w-28 text-center px-3 py-2">Colors</th>
           <th class="w-28 text-center px-3 py-2">Sizes</th>
+          <th class="w-28 text-center px-3 py-2">Sale</th>
+          <th class="w-28 text-center px-3 py-2">Stock</th>
           <th class="w-32 text-center px-3 py-2">Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let product of products; let i = index" 
-            class="hover:bg-base-200 transition-all duration-200">
+        <tr *ngFor="let product of products; let i = index" class="hover:bg-base-200 transition-all duration-200">
           <td class="text-center px-3 py-2">{{ i + 1 }}</td>
           <td class="text-left px-3 py-2">{{ product.name }}</td>
           <td class="text-left px-3 py-2">{{ product.brand }}</td>
           <td class="text-left px-3 py-2">{{ product.category.name || '-' }}</td>
           <td class="text-right px-3 py-2">{{ product.price | currency:'INR':'symbol':'1.0-0' }}</td>
-          <td class="text-right px-3 py-2">
-            {{ product.discountPrice ? (product.discountPrice | currency:'INR':'symbol':'1.0-0') : '-' }}
-          </td>
+          <td class="text-right px-3 py-2">{{ product.discountPrice ? (product.discountPrice | currency:'INR':'symbol':'1.0-0') : '-' }}</td>
           <td class="text-center px-3 py-2">{{ product.quantity }}</td>
           <td class="px-3 py-2">
             <div class="flex justify-center gap-1 flex-wrap">
               <span *ngFor="let color of product.colors"
                     class="w-5 h-5 rounded-full border border-gray-400 shadow-sm"
-                    [ngStyle]="{'background-color': color}"
+                    [style.background-color]="color"
                     [attr.title]="color">
               </span>
             </div>
@@ -54,13 +54,26 @@
               <span *ngFor="let size of product.sizes" class="badge badge-outline badge-sm">{{ size }}</span>
             </div>
           </td>
+          <td class="text-center px-3 py-2">
+            <span [ngClass]="product.onSale ? 'badge badge-success' : 'badge badge-error'">
+              {{ product.onSale ? 'Yes' : 'No' }}
+            </span>
+          </td>
+          <td class="text-center px-3 py-2">
+            <span [ngClass]="product.inStock ? 'badge badge-success' : 'badge badge-error'">
+              {{ product.inStock ? 'Yes' : 'No' }}
+            </span>
+          </td>
           <td class="px-3 py-2">
             <div class="flex justify-center gap-2 flex-wrap">
-              <button class="btn btn-sm btn-neutral" (click)="editProduct(product)">Edit</button>
-<button class="btn btn-sm btn-primary" 
-        (click)="product.id !== undefined && deleteProduct(product.id)">
-  Delete
+              <button class="btn btn-sm btn-neutral flex items-center gap-1" (click)="startEdit(product)">
+                <i class="fa-solid fa-pen"></i> Update
+              </button>
+              <button class="btn btn-sm btn-primary flex items-center gap-1" 
+        (click)="deleteProduct(product.id!)">
+  <i class="fa-solid fa-trash"></i> Delete
 </button>
+
             </div>
           </td>
         </tr>
@@ -71,5 +84,132 @@
   <!-- No products -->
   <div *ngIf="!loading && !products.length" class="text-center py-12 text-gray-400">
     No products found.
+  </div>
+
+  <!-- Edit Modal -->
+  <div *ngIf="editingProduct" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-base-100 rounded-lg shadow-xl p-6 sm:p-8 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-black">Edit Product: {{ editingProduct.name }}</h2>
+        <button class="btn btn-sm btn-circle btn-ghost" (click)="cancelEdit()" aria-label="Close">✕</button>
+      </div>
+
+     <form #editForm="ngForm" (ngSubmit)="saveEdit(editForm)" class="p-6 bg-base-100">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- Name -->
+    <div class="form-control w-full">
+      <label class="label"><span class="label-text font-semibold">Name</span></label>
+      <input
+        id="nameInput"
+        type="text"
+        [(ngModel)]="editedValues!.name"
+        name="name"
+        class="input input-bordered w-full"
+        required
+        placeholder="Enter product name"
+      />
+    </div>
+
+    <!-- Brand -->
+    <div class="form-control w-full">
+      <label class="label"><span class="label-text font-semibold">Brand</span></label>
+      <input
+        type="text"
+        [(ngModel)]="editedValues!.brand"
+        name="brand"
+        class="input input-bordered w-full"
+        required
+        placeholder="Enter brand name"
+      />
+    </div>
+
+    <!-- Category -->
+    <div class="form-control w-full">
+      <label class="label"><span class="label-text font-semibold">Category</span></label>
+      <select
+        [(ngModel)]="editedValues!.category.id"
+        name="category"
+        class="select select-bordered w-full"
+        required
+      >
+        <option *ngFor="let cat of categories" [ngValue]="cat.id">{{ cat.name }}</option>
+      </select>
+    </div>
+
+    <!-- Quantity -->
+    <div class="form-control w-full">
+      <label class="label"><span class="label-text font-semibold">Quantity</span></label>
+      <input
+        type="number"
+        [(ngModel)]="editedValues!.quantity"
+        name="quantity"
+        class="input input-bordered w-full"
+        required
+        placeholder="0"
+      />
+    </div>
+
+    <!-- Price -->
+    <div class="form-control w-full">
+      <label class="label"><span class="label-text font-semibold">Price (INR)</span></label>
+      <input
+        type="number"
+        [(ngModel)]="editedValues!.price"
+        name="price"
+        class="input input-bordered w-full"
+        required
+        placeholder="0.00"
+      />
+    </div>
+
+    <!-- Discount Price -->
+    <div class="form-control w-full">
+      <label class="label"><span class="label-text font-semibold">Discount Price (INR)</span></label>
+      <input
+        type="number"
+        [(ngModel)]="editedValues!.discountPrice"
+        name="discountPrice"
+        class="input input-bordered w-full"
+        placeholder="Optional"
+      />
+    </div>
+
+    <!-- On Sale -->
+    <div class="form-control w-full">
+      <label class="label"><span class="label-text font-semibold">On Sale</span></label>
+      <select
+        [(ngModel)]="editedValues!.onSale"
+        name="onSale"
+        class="select select-bordered w-full"
+      >
+        <option [ngValue]="true">Yes</option>
+        <option [ngValue]="false">No</option>
+      </select>
+    </div>
+
+    <!-- In Stock -->
+    <div class="form-control w-full">
+      <label class="label"><span class="label-text font-semibold">In Stock</span></label>
+      <select
+        [(ngModel)]="editedValues!.inStock"
+        name="inStock"
+        class="select select-bordered w-full"
+      >
+        <option [ngValue]="true">Yes</option>
+        <option [ngValue]="false">No</option>
+      </select>
+    </div>
+
+  </div>
+
+  <!-- Actions -->
+  <div class="flex justify-end gap-4 mt-8">
+    <button type="button" class="btn btn-neutral" (click)="cancelEdit()">Cancel</button>
+    <button type="submit" class="btn btn-primary" [disabled]="!editForm.form.valid">Save</button>
+  </div>
+</form>
+
+    </div>
   </div>
 </div>
