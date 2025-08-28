@@ -5,13 +5,17 @@ export default {
   content: ["./src/**/*.{html,ts}"],
   theme: {
     fontFamily: {
-    roboto: ["Outfit", "sans-serif"],
-    outfit: ["Outfit", "sans-serif"],
-    raleway: ["Raleway", "sans-serif"],
-    quicksand: ["Quicksand", "sans-serif"],
-    bitter: ["Bitter", "sans-serif"],
-  },
-    extend: {},
+      roboto: ["Outfit", "sans-serif"],
+      outfit: ["Outfit", "sans-serif"],
+      raleway: ["Raleway", "sans-serif"],
+      quicksand: ["Quicksand", "sans-serif"],
+      bitter: ["Bitter", "sans-serif"],
+    },
+    extend: {
+      colors: {
+        brandblue: "#786edc",
+      },
+    },
   },
   plugins: [daisyui],
   daisyui: {
@@ -23,8 +27,8 @@ export default {
           "base-200": "oklch(98% 0 0)",
           "base-300": "oklch(95% 0 0)",
           "base-content": "oklch(21% 0.006 285.885)",
-          "primary": "oklch(45% 0.24 277.023)",
-          "primary-content": "oklch(93% 0.034 272.788)",
+          "primary": "#786edc",
+          "primary-content": "#ffffff",
           "secondary": "oklch(65% 0.241 354.308)",
           "secondary-content": "oklch(94% 0.028 342.258)",
           "accent": "oklch(77% 0.152 181.912)",

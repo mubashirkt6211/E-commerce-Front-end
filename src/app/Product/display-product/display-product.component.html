@@ -1,0 +1,87 @@
+<div class="max-w-7xl mx-auto mt-12 mb-10 px-4 font-outfit">
+  <h2 class="text-3xl font-bold mb-10 text-gray-900 flex items-center gap-3">
+    <i class="fa-solid fa-bag-shopping text-black"></i>
+    Our Latest Products
+  </h2>
+
+  <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 font-outfit">
+    <div
+      *ngFor="let product of products"
+      class="bg-white rounded-2xl border border-gray-200 transition hover:scale-105 hover:shadow-lg duration-300 p-4 flex flex-col relative"
+      [class.opacity-60]="!product.inStock"
+      [class.pointer-events-none]="!product.inStock"
+      [routerLink]="product.inStock ? ['/details', product.id] : null"
+    >
+      <div class="relative w-full h-48 flex items-center justify-center">
+        <img
+          *ngIf="product.imageUrls?.length"
+          [src]="'http://localhost:8080' + product.imageUrls[0]"
+          [alt]="product.name"
+          class="w-full h-full object-contain transition-transform duration-300 hover:scale-105"
+        />
+        <div *ngIf="!product.imageUrls?.length" class="text-gray-400">
+          <i class="fa-solid fa-image text-3xl"></i>
+        </div>
+
+        <span
+          *ngIf="product.onSale"
+          class="absolute top-3 left-3 bg-green-600 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1"
+        >
+          <i class="fa-solid fa-star"></i> New
+        </span>
+
+        <span
+          *ngIf="!product.inStock"
+          class="absolute top-15 right-9 bg-red-600 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1"
+        >
+          <i class="fa-solid fa-ban"></i> Out of Stock
+        </span>
+      </div>
+
+      <div class="mt-4 flex flex-col flex-1 justify-between">
+        <div class="text-center">
+          <p class="text-sm text-gray-500 flex items-center justify-center gap-1">
+            <i class="fa-solid fa-tag"></i> {{ product.brand }}
+          </p>
+          <h3 class="font-semibold text-lg text-gray-900 mt-1 flex items-center justify-center gap-2">
+             {{ product.name }}
+          </h3>
+        </div>
+
+        <div class="flex flex-wrap gap-1 mt-2 text-xs text-gray-700">
+          <span class="font-medium flex items-center gap-1">
+            <i class="fa-solid fa-ruler"></i> Sizes:
+          </span>
+          <span
+            *ngFor="let size of (product.sizes || [])"
+            class="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-md"
+          >
+            {{ size }}
+          </span>
+        </div>
+
+        <div class="flex gap-2 mt-2 items-center">
+          <span class="text-xs font-medium text-gray-600 flex items-center gap-1">
+            <i class="fa-solid fa-palette"></i> Colors:
+          </span>
+          <span
+            *ngFor="let color of (product.colors || [])"
+            [style.backgroundColor]="color"
+            class="w-6 h-6 rounded-full border border-gray-300"
+            title="{{ color }}"
+          ></span>
+        </div>
+
+        <div class="mt-4 flex items-center gap-2">
+          <span *ngIf="product.discountPrice" class="line-through text-gray-400 text-sm flex items-center gap-1">
+            <i class="fa-solid fa-tag"></i> ₹{{ product.price }}
+          </span>
+          <span class="text-xl font-bold text-black flex items-center gap-1">
+            <i class="fa-solid fa-indian-rupee-sign"></i>
+            {{ product.discountPrice || product.price }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

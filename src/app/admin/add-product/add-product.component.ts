@@ -157,6 +157,7 @@ export class AddProductComponent implements OnInit {
         this.toastr.success('✅ Product created successfully!', 'Success');
         this.resetForm();
         this.loading = false;
+        this.router.navigate(['/product-manage']);
       },
       error: err => this.handleError(err, 'creating product')
     });

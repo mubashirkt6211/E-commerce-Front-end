@@ -25,9 +25,10 @@ export interface Product {
   category: Category;
   weight: number;
   shippingClass: ShippingType;
-  images?: string[];
+  imageUrls: string[];   // updated
   colors: string[];
   sizes: string[];
+  sizesArray: string[];   // helper property for template
   inStock: boolean;
   onSale: boolean;
 }

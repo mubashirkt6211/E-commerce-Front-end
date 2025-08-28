@@ -1,159 +1,320 @@
-<div class="max-w-6xl mx-auto mt-12 font-outfit px-4">
-  <!-- Main Heading -->
-  <h1 class="text-3xl font-bold mb-12 flex items-center gap-3 text-gray-800 animate-fadeIn">
-    <i class="fa-solid fa-box-open text-black"></i>
+<div class="max-w-5xl mx-auto mt-12 font-outfit px-4">
+  <!-- ✅ Heading -->
+  <h1 class="text-4xl font-bold mb-10 flex items-center gap-3 text-gray-900 font-quicksand">
+    <i class="fa-solid fa-truck text-black"></i>
     Add New Product
   </h1>
 
-  <!-- Step Progress Indicator -->
- <!-- STEP PROGRESS BAR -->
-<div class="relative w-full bg-gray-200 rounded-full h-3 mb-12 overflow-hidden shadow-inner">
-  <!-- Filled portion -->
-  <div
-    class="bg-black h-3 rounded-full transition-all duration-500"
-    [style.width.%]="(step / 3) * 100"
-  ></div>
-</div>
+  <!-- ✅ Stepper Progress -->
+  <div class="flex justify-between items-center mb-12 relative px-4 max-w-4xl mx-auto select-none">
+    <!-- Background Line -->
+    <div class="absolute top-1/2 left-4 right-4 h-6 bg-gray-200 rounded-xl -z-10"></div>
 
-<!-- Optional Step Labels -->
-<div class="flex justify-between mb-6 text-sm font-medium text-gray-600">
-  <span [class.text-black]="step >= 1">Product</span>
-  <span [class.text-black]="step >= 2">Shipping</span>
-  <span [class.text-black]="step >= 3">Colors & Sizes</span>
-</div>
+    <!-- Progress Line (dynamic width) -->
+    <div
+      class="absolute top-1/2 left-4 h-6 bg-black rounded-xl -z-10 transition-all duration-500 ease-in-out"
+      [style.width.%]="(step - 1) * 50"
+    ></div>
 
+    <!-- Step Icons -->
+    <div *ngFor="let s of [1,2,3]" class="flex flex-col items-center z-10 w-1/3">
+      <!-- Circle -->
+      <div
+        class="w-12 h-12 flex items-center justify-center rounded-full border-2 font-bold transition-colors duration-300"
+        [ngClass]="{
+          'bg-black text-white border-black scale-110 shadow-lg': step >= s,
+          'bg-white text-gray-400 border-gray-300': step < s
+        }"
+      >
+        <i *ngIf="s === 1" class="fa-solid fa-clipboard-list"
+          [ngClass]="{ 'text-white': step >= s, 'text-gray-400': step < s }"
+          aria-hidden="true"></i>
+        <i *ngIf="s === 2" class="fa-solid fa-truck"
+          [ngClass]="{ 'text-white': step >= s, 'text-gray-400': step < s }"
+          aria-hidden="true"></i>
+        <i *ngIf="s === 3" class="fa-solid fa-palette"
+          [ngClass]="{ 'text-white': step >= s, 'text-gray-400': step < s }"
+          aria-hidden="true"></i>
+      </div>
 
+      <!-- Label -->
+      <span
+        class="mt-3 text-sm font-semibold transition-colors duration-300"
+        [class.text-black]="step === s"
+        [class.text-gray-500]="step !== s"
+        [attr.aria-current]="step === s ? 'step' : null"
+      >
+        {{ s === 1 ? 'Product' : s === 2 ? 'Shipping' : 'Colors & Sizes' }}
+      </span>
+    </div>
+  </div>
+
+  <!-- ✅ Form Steps -->
   <form (ngSubmit)="onSubmit()" #productForm="ngForm" class="space-y-10">
+    <!-- STEP 1 -->
+    <div *ngIf="step === 1" class="bg-white rounded-2xl p-8 shadow-md">
+      <h2 class="text-2xl font-semibold mb-6">
+        <i class="fa-solid fa-file-lines"></i> Product Details
+      </h2>
 
-    <!-- STEP 1: PRODUCT DETAILS -->
-    <div *ngIf="step === 1" class="card bg-white shadow-xl rounded-2xl p-8 hover:shadow-2xl transition-all duration-500 animate-slideInRight">
-      <h2 class="text-2xl font-semibold mb-6 border-b pb-2">Step 1: Product Details</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- Product Name -->
+        <div>
+          <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
+            Product Name <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            id="name"
+            [(ngModel)]="product.name"
+            name="name"
+            required
+            placeholder="Enter product name"
+            class="w-full border rounded-xl px-4 py-3 text-gray-800 focus:ring-2 focus:ring-black outline-none"
+          />
+        </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-        <input type="text" name="name" [(ngModel)]="product.name" required placeholder="Product Name *"
-               class="input input-bordered rounded-xl w-full hover:shadow-md transition duration-300" />
-        <input type="text" name="brand" [(ngModel)]="product.brand" required placeholder="Brand *"
-               class="input input-bordered rounded-xl w-full hover:shadow-md transition duration-300" />
+        <!-- Brand -->
+        <div>
+          <label for="brand" class="block text-sm font-semibold text-gray-700 mb-2">
+            Brand <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            id="brand"
+            [(ngModel)]="product.brand"
+            name="brand"
+            required
+            placeholder="Enter brand name"
+            class="w-full border rounded-xl px-4 py-3 text-gray-800 focus:ring-2 focus:ring-black outline-none"
+          />
+        </div>
       </div>
 
-      <textarea name="description" [(ngModel)]="product.description" rows="4" required
-                placeholder="Product Description *" class="textarea textarea-bordered w-full mb-6 hover:shadow-md transition duration-300"></textarea>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- Weight -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            Weight (kg) <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="number"
+            [(ngModel)]="product.weight"
+            name="weight"
+            required
+            placeholder="Enter product weight"
+            class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-black outline-none"
+          />
+        </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-        <input type="number" name="weight" [(ngModel)]="product.weight" required placeholder="Weight (kg) *"
-               class="input input-bordered rounded-xl w-full hover:shadow-md transition duration-300" />
-        <input type="number" name="quantity" [(ngModel)]="product.quantity" required placeholder="Quantity *"
-               class="input input-bordered w-full rounded-xl hover:shadow-md transition duration-300" />
-        <input type="number" name="price" [(ngModel)]="product.price" required placeholder="Price *"
-               class="input input-bordered rounded-xl w-full hover:shadow-md transition duration-300" />
-        <input type="number" name="discountPrice" [(ngModel)]="product.discountPrice" placeholder="Discount Price"
-               class="input input-bordered rounded-xl w-full hover:shadow-md transition duration-300" />
+        <!-- Quantity -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            Quantity <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="number"
+            [(ngModel)]="product.quantity"
+            name="quantity"
+            required
+            placeholder="Enter product quantity"
+            class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-black outline-none"
+          />
+        </div>
+
+        <!-- Price -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            Price <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="number"
+            [(ngModel)]="product.price"
+            name="price"
+            required
+            placeholder="Enter product price"
+            class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-black outline-none"
+          />
+        </div>
+
+        <!-- Discount Price -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            Discount Price
+          </label>
+          <input
+            type="number"
+            [(ngModel)]="product.discountPrice"
+            name="discountPrice"
+            placeholder="Enter discount price"
+            class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-black outline-none"
+          />
+        </div>
       </div>
 
-      <div class="flex gap-6 mb-6">
-        <label class="flex items-center gap-2 cursor-pointer">
-          <input type="checkbox" [(ngModel)]="product.inStock" name="inStock" class="checkbox checkbox-neutral" /> In Stock
-        </label>
-        <label class="flex items-center gap-2 cursor-pointer">
-          <input type="checkbox" [(ngModel)]="product.onSale" name="onSale" class="checkbox checkbox-neutral" /> On Sale
-        </label>
-      </div>
-
+      <!-- Next Button -->
       <div class="flex justify-end">
-        <button type="button" class="btn btn-neutral px-6 hover:scale-105 transition-transform" (click)="step = 2">Next →</button>
+        <button
+          type="button"
+          (click)="step = 2"
+          class="px-6 py-3 rounded-xl bg-black text-white font-medium hover:bg-gray-900 transition"
+        >
+          Next →
+        </button>
       </div>
     </div>
 
-    <!-- STEP 2: SHIPPING & CATEGORY -->
-    <div *ngIf="step === 2" class="card bg-white shadow-xl rounded-2xl p-8 transition-all duration-500 animate-slideInRight">
-      <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2">
-        <i class="fa-solid fa-truck"></i> Shipping & Category
+    <!-- STEP 2 -->
+    <div *ngIf="step === 2" class="bg-white rounded-2xl p-8 shadow-md animate-fadeIn">
+      <h2 class="text-2xl font-semibold mb-6">
+        <i class="fa-solid fa-truck-fast"></i> Shipping & Category
       </h2>
 
       <div class="mb-6">
-        <label class="label"><span class="label-text font-medium">Shipping Options *</span></label>
+        <p class="font-medium mb-3">Shipping Options *</p>
         <div class="flex flex-wrap gap-4">
-          <label *ngFor="let type of availableShippingTypes" class="flex items-center rounded-xl gap-2 cursor-pointer">
-            <input type="checkbox" class="checkbox checkbox-neutral"
-                   [checked]="product.shippingTypes.includes(type)"
-                   (change)="toggleShippingType(type)" />
-            {{ type | titlecase }}
+          <label *ngFor="let type of availableShippingTypes" class="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              class="accent-black"
+              [checked]="product.shippingTypes.includes(type)"
+              (change)="toggleShippingType(type)"
+            />
+            <span class="text-gray-800">{{ type | titlecase }}</span>
           </label>
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <select name="category" [(ngModel)]="product.category" required class="select select-bordered w-full hover:shadow-md transition duration-300">
+        <select
+          name="category"
+          [(ngModel)]="product.category"
+          required
+          class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-black outline-none"
+        >
           <option value="" disabled>Select Category *</option>
           <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
         </select>
 
-        <input type="file" (change)="onFilesSelected($event)" accept="image/*" multiple
-               class="file-input file-input-bordered rounded-xl w-full hover:shadow-md transition duration-300" />
+        <input
+          type="file"
+          (change)="onFilesSelected($event)"
+          accept="image/*"
+          multiple
+          class="w-full border rounded-xl px-4 py-3 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-black file:text-white hover:file:bg-gray-900 cursor-pointer"
+        />
       </div>
 
       <div *ngIf="previewUrls.length" class="flex flex-wrap gap-4 mb-6">
-        <img *ngFor="let url of previewUrls" [src]="url"
-             class="h-28 w-28 object-cover rounded-xl border shadow hover:scale-105 transition-transform duration-300" />
+        <img
+          *ngFor="let url of previewUrls"
+          [src]="url"
+          class="h-24 w-24 object-cover rounded-xl border shadow hover:scale-105 transition"
+        />
       </div>
 
       <div class="flex justify-between">
-        <button type="button" class="btn btn-outline px-6 hover:scale-105 transition-transform" (click)="step = 1">← Back</button>
-        <button type="button" class="btn btn-neutral px-6 hover:scale-105 transition-transform" (click)="step = 3">Next →</button>
+        <button
+          type="button"
+          (click)="step = 1"
+          class="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-100 transition"
+        >
+          ← Back
+        </button>
+        <button
+          type="button"
+          (click)="step = 3"
+          class="px-6 py-3 rounded-xl bg-black text-white font-medium hover:bg-gray-900 transition"
+        >
+          Next →
+        </button>
       </div>
     </div>
 
-    <!-- STEP 3: COLORS & SIZES -->
-    <div *ngIf="step === 3" class="card bg-white shadow-xl rounded-2xl p-8 transition-all duration-500 animate-slideInRight">
-      <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2">
+    <!-- STEP 3 -->
+    <div *ngIf="step === 3" class="bg-white rounded-2xl p-8 shadow-md animate-fadeIn">
+      <h2 class="text-2xl font-semibold mb-6">
         <i class="fa-solid fa-palette"></i> Colors & Sizes
       </h2>
 
       <!-- Colors -->
-      <div class="mb-6">
-        <label class="label"><span class="label-text font-medium">Available Colors</span></label>
+      <div class="mb-10">
+        <p class="font-medium mb-3">Available Colors</p>
         <div class="flex items-center gap-3 mb-4">
-          <input type="color" [(ngModel)]="selectedColor" name="selectedColor"
-                 class="w-12 h-12 p-0 border rounded-full cursor-pointer shadow-md transition-transform hover:scale-110" />
-          <button type="button" class="btn btn-sm btn-neutral hover:scale-105 transition-transform" (click)="addColor()">Add</button>
+          <input
+            type="color"
+            [(ngModel)]="selectedColor"
+            name="selectedColor"
+            class="w-12 h-12 rounded-full border cursor-pointer shadow"
+          />
+          <button
+            type="button"
+            (click)="addColor()"
+            class="px-4 py-2 rounded-xl bg-black text-white font-medium hover:bg-gray-900 transition"
+          >
+            Add
+          </button>
         </div>
-
         <div class="flex flex-wrap gap-3">
           <div *ngFor="let color of product.colors" class="relative group">
-            <div class="w-10 h-10 rounded-full border-2 shadow-md transition-transform transform hover:scale-110"
-                 [ngStyle]="{ 'background-color': color }" title="{{ color }}"></div>
-            <button type="button" (click)="removeColor(color)"
-                    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity transform hover:scale-125 shadow-lg"
-                    aria-label="Remove color">✕</button>
+            <div class="w-10 h-10 rounded-full border shadow" [style.backgroundColor]="color"></div>
+            <button
+              type="button"
+              (click)="removeColor(color)"
+              class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition"
+            >
+              ✕
+            </button>
           </div>
         </div>
       </div>
 
       <!-- Sizes -->
-      <div class="mb-6">
-        <label class="label"><span class="label-text font-medium">Available Sizes</span></label>
+      <div class="mb-10">
+        <p class="font-medium mb-3">Available Sizes</p>
         <div class="flex gap-3 mb-4">
-          <input type="text" [(ngModel)]="newSize" name="newSize" placeholder="e.g. S, M, L"
-                 class="input input-bordered w-40 hover:shadow-md transition duration-300 " />
-          <button type="button" class="btn btn-sm btn-neutral hover:scale-105 transition-transform" (click)="addSize()">Add</button>
+          <input
+            type="text"
+            [(ngModel)]="newSize"
+            name="newSize"
+            placeholder="e.g. S, M, L"
+            class="w-40 border rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none"
+          />
+          <button
+            type="button"
+            (click)="addSize()"
+            class="px-4 py-2 rounded-xl bg-black text-white font-medium hover:bg-gray-900 transition"
+          >
+            Add
+          </button>
         </div>
-
         <div class="flex flex-wrap gap-3">
-          <div *ngFor="let size of product.sizes" class="flex items-center gap-2 bg-gray-200 px-3 py-1 rounded-full shadow-sm hover:scale-105 transition-transform">
+          <div *ngFor="let size of product.sizes" class="flex items-center gap-2 bg-gray-200 px-4 py-1 rounded-full shadow">
             <span class="font-medium">{{ size }}</span>
-            <button type="button" (click)="removeSize(size)" class="text-red-500 font-bold">✕</button>
+            <button type="button" (click)="removeSize(size)" class="text-red-600 font-bold">✕</button>
           </div>
         </div>
       </div>
 
       <div class="flex justify-between">
-        <button type="button" class="btn btn-outline px-6 hover:scale-105 transition-transform" (click)="step = 2">← Back</button>
-        <button type="submit" class="btn btn-neutral px-6 hover:scale-105 transition-transform" [disabled]="!productForm.form.valid || loading">
+        <button
+          type="button"
+          (click)="step = 2"
+          class="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-100 transition"
+        >
+          ← Back
+        </button>
+        <button
+          type="submit"
+          [disabled]="!productForm.form.valid || loading"
+          class="px-6 py-3 rounded-xl bg-black text-white font-medium hover:bg-gray-900 transition disabled:opacity-50"
+        >
           <span *ngIf="!loading">Submit</span>
-          <span *ngIf="loading"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Submitting...</span>
+          <span *ngIf="loading">
+            <i class="fa-solid fa-spinner fa-spin mr-2"></i> Submitting...
+          </span>
         </button>
       </div>
     </div>
   </form>
 </div>
-

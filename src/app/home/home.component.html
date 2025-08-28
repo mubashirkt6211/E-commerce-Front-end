@@ -1,41 +1,46 @@
-<section class="relative w-full min-h-screen flex items-center justify-center px-6 sm:px-12 lg:px-24 rounded-xl shadow-xl overflow-hidden">
-  <video 
-    src="assets/image/hero.mp4" 
-    autoplay 
-    loop 
-    muted 
-    playsinline 
-    class="absolute inset-0 w-full h-full object-cover -z-10">
-  </video>
+<section
+  class="relative w-full min-h-screen flex items-center justify-center px-6 sm:px-12 lg:px-24 rounded-xl shadow-xl overflow-hidden"
+>
+  <video
+    src="assets/image/hero.mp4"
+    autoplay
+    loop
+    muted
+    playsinline
+    class="absolute inset-0 w-full h-full object-cover -z-10"
+  ></video>
   <div class="absolute inset-0 bg-black/30 -z-10"></div>
-  <div class="max-w-7xl w-full flex flex-col md:flex-row items-center justify-between gap-12 font-quicksand text-white">
-<div class="flex-1 flex flex-col items-start gap-6 text-white">
-  <h2 class="text-xl font-semibold">Experience True Wireless Freedom</h2>
-  <h1 class="text-6xl sm:text-7xl font-bold leading-tight">
-    AirPods Pro
-  </h1>
-  <p class="text-lg sm:text-xl max-w-md leading-relaxed text-gray-200">
-    Immerse yourself in rich, crystal-clear sound with Active Noise Cancellation and a sleek design crafted for all-day comfort.
-  </p>
-  <div class="flex gap-4 mt-6">
-    <button 
-      class="px-8 py-3 border border-white text-white rounded-full font-medium shadow-md 
-             hover:bg-white hover:text-black transition-all duration-300">
-      Learn More
-    </button>
-    <button 
-      class="px-8 py-3 bg-black text-white rounded-full font-medium shadow-md 
-             hover:bg-gray-500 transition-all duration-300">
-              <i class="fa-solid fa-truck text-xl"></i>
-      Buy Now
-    </button>
-  </div>
-</div>
-
+  <div
+    class="max-w-7xl w-full flex flex-col md:flex-row items-center justify-between gap-12 font-quicksand text-white"
+  >
+    <div class="flex-1 flex flex-col items-start gap-6 text-white">
+      <h2 class="text-xl font-semibold">Experience True Wireless Freedom</h2>
+      <h1 class="text-6xl sm:text-7xl font-bold leading-tight">AirPods Pro</h1>
+      <p class="text-lg sm:text-xl max-w-md leading-relaxed text-gray-200">
+        Immerse yourself in rich, crystal-clear sound with Active Noise
+        Cancellation and a sleek design crafted for all-day comfort.
+      </p>
+      <div class="flex gap-4 mt-6">
+        <button
+          class="px-8 py-3 border border-white text-white rounded-full font-medium shadow-md hover:bg-white hover:text-black transition-all duration-300"
+        >
+          Learn More
+        </button>
+        <button
+          [routerLink]="'/display-product'"
+          class="px-8 py-3 bg-black text-white rounded-full font-medium shadow-md hover:bg-gray-500 transition-all duration-300"
+        >
+          <i class="fa-solid fa-truck text-xl"></i>
+          Buy Now
+        </button>
+      </div>
+    </div>
   </div>
 </section>
 <section class="w-full my-2 md:my-28 px-4 sm:px-8 lg:px-20">
-  <h4 class="text-3xl sm:text-4xl font-bold text-center mb-12 font-raleway text-gray-900">
+  <h4
+    class="text-3xl sm:text-4xl font-bold text-center mb-12 font-raleway text-gray-900"
+  >
     Featured Products
   </h4>
   <div class="max-w-[1400px] mx-auto">
